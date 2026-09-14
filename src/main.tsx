@@ -18,14 +18,32 @@ declare module '@tanstack/react-router' {
   }
 }
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      retry: 1,
+    },
+  },
+})
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <MantineProvider defaultColorScheme="auto">
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </MantineProvider>
-  </StrictMode>,
-)
+async function main() {
+  try {
+    const { worker } = await import('./mocks/browser')
+    await worker.start({ onUnhandledRequest: 'bypass' })
+  } catch (error) {
+    console.error('Mock API failed to start', error)
+  }
+
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <MantineProvider defaultColorScheme="auto">
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </MantineProvider>
+    </StrictMode>,
+  )
+}
+
+void main()
