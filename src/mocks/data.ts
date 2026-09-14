@@ -1,6 +1,6 @@
-import type { Invoice, InvoiceStatus } from '@/features/invoices/types'
+import type { Invoice, InvoiceStatus } from '@/features/invoices/types';
 
-const INVOICE_COUNT = 500
+const INVOICE_COUNT = 500;
 
 const COMPANIES = [
   'Acme Logistics',
@@ -23,21 +23,21 @@ const COMPANIES = [
   'Radler Sport',
   'Sirio Robotica',
   'Tramontana Vini',
-]
+];
 
-const TLDS = ['com', 'de', 'it', 'nl', 'fr', 'es']
+const TLDS = ['com', 'de', 'it', 'nl', 'fr', 'es'];
 
-const COMBINING_MARKS = new RegExp('[\\u0300-\\u036f]', 'g')
+const COMBINING_MARKS = new RegExp('[\\u0300-\\u036f]', 'g');
 
 function mulberry32(seed: number) {
-  let a = seed
+  let a = seed;
   return () => {
-    a |= 0
-    a = (a + 0x6d2b79f5) | 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
 function slugify(value: string) {
@@ -46,21 +46,21 @@ function slugify(value: string) {
     .replace(COMBINING_MARKS, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
+    .replace(/^-|-$/g, '');
 }
 
 function addDays(date: Date, days: number) {
-  const next = new Date(date)
-  next.setUTCDate(next.getUTCDate() + days)
-  return next
+  const next = new Date(date);
+  next.setUTCDate(next.getUTCDate() + days);
+  return next;
 }
 
 function isoDate(date: Date) {
-  return date.toISOString().slice(0, 10)
+  return date.toISOString().slice(0, 10);
 }
 
 function pick<T>(random: () => number, items: readonly T[]) {
-  return items[Math.floor(random() * items.length)]
+  return items[Math.floor(random() * items.length)];
 }
 
 function statusFor(
@@ -68,22 +68,22 @@ function statusFor(
   dueAt: Date,
   now: Date,
 ): InvoiceStatus {
-  const roll = random()
-  if (roll < 0.06) return 'draft'
-  if (roll < 0.1) return 'void'
-  if (roll < 0.55) return 'paid'
-  return dueAt < now ? 'overdue' : 'sent'
+  const roll = random();
+  if (roll < 0.06) return 'draft';
+  if (roll < 0.1) return 'void';
+  if (roll < 0.55) return 'paid';
+  return dueAt < now ? 'overdue' : 'sent';
 }
 
 export function generateInvoices(seed = 20260914, now = new Date()): Invoice[] {
-  const random = mulberry32(seed)
-  const invoices: Invoice[] = []
+  const random = mulberry32(seed);
+  const invoices: Invoice[] = [];
 
   for (let i = 0; i < INVOICE_COUNT; i += 1) {
-    const customerName = pick(random, COMPANIES)
-    const issuedAt = addDays(now, -Math.floor(random() * 180))
-    const dueAt = addDays(issuedAt, pick(random, [14, 30, 45, 60]))
-    const status = statusFor(random, dueAt, now)
+    const customerName = pick(random, COMPANIES);
+    const issuedAt = addDays(now, -Math.floor(random() * 180));
+    const dueAt = addDays(issuedAt, pick(random, [14, 30, 45, 60]));
+    const status = statusFor(random, dueAt, now);
 
     invoices.push({
       id: `inv_${String(i + 1).padStart(4, '0')}`,
@@ -96,8 +96,8 @@ export function generateInvoices(seed = 20260914, now = new Date()): Invoice[] {
       dueAt: isoDate(dueAt),
       status,
       remindersSent: status === 'overdue' ? Math.floor(random() * 3) : 0,
-    })
+    });
   }
 
-  return invoices
+  return invoices;
 }

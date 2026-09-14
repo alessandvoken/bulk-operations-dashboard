@@ -1,4 +1,4 @@
-import { Container, Stack, Text, Title } from '@mantine/core'
+import { Container, Stack, Text, Title } from '@mantine/core';
 
 export function InvoicesPage() {
   return (
@@ -8,5 +8,5 @@ export function InvoicesPage() {
         <Text c="dimmed">Bulk operations dashboard</Text>
       </Stack>
     </Container>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-import { MantineProvider } from '@mantine/core'
-import '@mantine/core/styles.css'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { routeTree } from './routeTree.gen'
+import { MantineProvider } from '@mantine/core';
+import '@mantine/core/styles.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { routeTree } from './routeTree.gen';
 
 const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
   scrollRestoration: true,
-})
+});
 
 declare module '@tanstack/react-router' {
   interface Register {
-    router: typeof router
+    router: typeof router;
   }
 }
 
@@ -25,14 +25,14 @@ const queryClient = new QueryClient({
       retry: 1,
     },
   },
-})
+});
 
 async function main() {
   try {
-    const { worker } = await import('./mocks/browser')
-    await worker.start({ onUnhandledRequest: 'bypass' })
+    const { worker } = await import('./mocks/browser');
+    await worker.start({ onUnhandledRequest: 'bypass' });
   } catch (error) {
-    console.error('Mock API failed to start', error)
+    console.error('Mock API failed to start', error);
   }
 
   createRoot(document.getElementById('root')!).render(
@@ -43,7 +43,7 @@ async function main() {
         </QueryClientProvider>
       </MantineProvider>
     </StrictMode>,
-  )
+  );
 }
 
-void main()
+void main();
