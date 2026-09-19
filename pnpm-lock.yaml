@@ -17,6 +17,9 @@ importers:
       '@mantine/notifications':
         specifier: ^9.6.1
         version: 9.6.1(@mantine/core@9.6.1(@mantine/hooks@9.6.1(react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(@mantine/hooks@9.6.1(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@tabler/icons-react':
+        specifier: ^3.46.0
+        version: 3.46.0(react@19.3.0)
       '@tanstack/react-query':
         specifier: ^5.102.8
         version: 5.102.8(react@19.3.0)
@@ -527,6 +530,14 @@ packages:
 
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
+
+  '@tabler/icons-react@3.46.0':
+    resolution: {integrity: sha512-CCm7xJWhDT2PH4ZIFkP6AgYKtVhq0gpYkjUN+GVh1AzmIQaa77OW0bQPBPQiTE0PsXMR9oSxFqA3qBglzPyrVQ==}
+    peerDependencies:
+      react: '>= 16'
+
+  '@tabler/icons@3.46.0':
+    resolution: {integrity: sha512-f2RYFl3fzPwj5WO82x6en0dmkjefxEfOm16D1ByM6cj/McNiwOkL4VaPUoP9VVIrXAD9WnTSVFr70px703b//A==}
 
   '@tanstack/eslint-plugin-query@5.102.8':
     resolution: {integrity: sha512-zRjG2PL3zvoqnsSNJFyfX5Mo+OwRwTbLERwZVO3oNQQn82V949INwaLrprzsOW/ivuow7gASeAUUC24xH7kwSQ==}
@@ -2724,6 +2735,13 @@ snapshots:
     optional: true
 
   '@rolldown/pluginutils@1.0.1': {}
+
+  '@tabler/icons-react@3.46.0(react@19.3.0)':
+    dependencies:
+      '@tabler/icons': 3.46.0
+      react: 19.3.0
+
+  '@tabler/icons@3.46.0': {}
 
   '@tanstack/eslint-plugin-query@5.102.8(eslint@10.10.0(jiti@2.7.0))(typescript@6.0.3)':
     dependencies:
