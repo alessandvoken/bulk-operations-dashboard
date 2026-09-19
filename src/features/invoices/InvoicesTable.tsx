@@ -8,6 +8,12 @@ type InvoicesTableProps = {
 export function InvoicesTable({ rows }: InvoicesTableProps) {
   return (
     <Table>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>Invoice</Table.Th>
+          <Table.Th>Customer</Table.Th>
+        </Table.Tr>
+      </Table.Thead>
       <Table.Tbody>
         {rows.map((invoice) => (
           <Table.Tr key={invoice.id}>
