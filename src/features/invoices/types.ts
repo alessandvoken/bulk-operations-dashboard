@@ -29,3 +29,10 @@ export const INVOICE_SORT_FIELDS = [
 ] as const satisfies readonly (keyof Invoice)[];
 
 export type InvoiceSortField = (typeof INVOICE_SORT_FIELDS)[number];
+
+export type InvoiceListSearch = {
+  page: number;
+  pageSize: number;
+  sort: InvoiceSortField;
+  dir: 'asc' | 'desc';
+};

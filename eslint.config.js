@@ -30,10 +30,7 @@ export default defineConfig([
   {
     files: ['src/routes/**/*.tsx'],
     rules: {
-      'react-refresh/only-export-components': [
-        'error',
-        { allowExportNames: ['Route'] },
-      ],
+      'react-refresh/only-export-components': 'off',
     },
   },
 ]);

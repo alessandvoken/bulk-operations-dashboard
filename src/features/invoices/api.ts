@@ -1,12 +1,21 @@
-import type { Invoice } from './types';
+import type { Invoice, InvoiceListSearch } from './types';
 
 export type InvoiceListResponse = {
   rows: Invoice[];
   total: number;
 };
 
-export async function fetchInvoices(): Promise<InvoiceListResponse> {
-  const res = await fetch('/api/invoices');
+export async function fetchInvoices(
+  search: InvoiceListSearch,
+): Promise<InvoiceListResponse> {
+  const params = new URLSearchParams();
+
+  params.set('page', String(search.page));
+  params.set('pageSize', String(search.pageSize));
+  params.set('sort', search.sort);
+  params.set('dir', search.dir);
+
+  const res = await fetch(`/api/invoices?${params}`);
 
   if (!res.ok) {
     throw new Error(`fetchInvoices ${res.status}`);

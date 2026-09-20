@@ -9,9 +9,14 @@ import {
 } from '@mantine/core';
 import { useInvoices } from './useInvoices';
 import { InvoicesTable } from './InvoicesTable';
+import type { InvoiceListSearch } from './types';
 
-export function InvoicesPage() {
-  const { data, isPending, isError, isSuccess } = useInvoices();
+type InvoicesPageProps = {
+  search: InvoiceListSearch;
+};
+
+export function InvoicesPage({ search }: InvoicesPageProps) {
+  const { data, isPending, isError, isSuccess } = useInvoices(search);
 
   function renderContent() {
     if (isPending) {
