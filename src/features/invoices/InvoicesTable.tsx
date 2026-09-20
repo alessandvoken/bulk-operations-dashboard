@@ -1,9 +1,26 @@
-import type { Invoice } from '@/features/invoices/types';
-import { Table } from '@mantine/core';
+import type { Invoice, InvoiceStatus } from '@/features/invoices/types';
+import { Table, Badge } from '@mantine/core';
 import { formatMoney } from '@/lib/money';
+import { formatDate } from '@/lib/date';
 
 type InvoicesTableProps = {
   rows: Invoice[];
+};
+
+const INVOICE_STATUS_COLORS: Record<InvoiceStatus, string> = {
+  draft: 'gray',
+  sent: 'blue',
+  paid: 'green',
+  overdue: 'red',
+  void: 'grape',
+};
+
+const INVOICE_STATUS_LABELS: Record<InvoiceStatus, string> = {
+  draft: 'Draft',
+  sent: 'Sent',
+  paid: 'Paid',
+  overdue: 'Overdue',
+  void: 'Void',
 };
 
 export function InvoicesTable({ rows }: InvoicesTableProps) {
@@ -24,11 +41,15 @@ export function InvoicesTable({ rows }: InvoicesTableProps) {
           <Table.Tr key={invoice.id}>
             <Table.Td>{invoice.customerName}</Table.Td>
             <Table.Td>{invoice.number}</Table.Td>
-            <Table.Td>{invoice.dueAt}</Table.Td>
+            <Table.Td>{formatDate(invoice.dueAt)}</Table.Td>
             <Table.Td ta="right">
               {formatMoney(invoice.amountCents, invoice.currency)}
             </Table.Td>
-            <Table.Td>{invoice.status}</Table.Td>
+            <Table.Td>
+              <Badge tt="none" color={INVOICE_STATUS_COLORS[invoice.status]}>
+                {INVOICE_STATUS_LABELS[invoice.status]}
+              </Badge>
+            </Table.Td>
             <Table.Td>{invoice.remindersSent}</Table.Td>
           </Table.Tr>
         ))}
