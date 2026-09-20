@@ -1,4 +1,12 @@
-import { Alert, Container, Skeleton, Stack, Title } from '@mantine/core';
+import {
+  Alert,
+  Container,
+  Paper,
+  Skeleton,
+  Stack,
+  Title,
+  Text,
+} from '@mantine/core';
 import { useInvoices } from './useInvoices';
 import { InvoicesTable } from './InvoicesTable';
 
@@ -7,7 +15,16 @@ export function InvoicesPage() {
 
   function renderContent() {
     if (isPending) {
-      return <Skeleton />;
+      return (
+        <Stack gap="sm">
+          <Skeleton height={32} />
+          <Skeleton height={24} />
+          <Skeleton height={24} />
+          <Skeleton height={24} />
+          <Skeleton height={24} />
+          <Skeleton height={24} />
+        </Stack>
+      );
     }
 
     if (isError) {
@@ -19,6 +36,14 @@ export function InvoicesPage() {
     }
 
     if (isSuccess) {
+      if (data.rows.length === 0) {
+        return (
+          <Paper withBorder p="md" radius="md">
+            <Text>No invoices found.</Text>
+          </Paper>
+        );
+      }
+
       return <InvoicesTable rows={data.rows} />;
     }
 
