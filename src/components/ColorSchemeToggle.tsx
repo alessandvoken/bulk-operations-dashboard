@@ -40,7 +40,7 @@ export function ColorSchemeToggle() {
       <Menu.Target>
         <Tooltip label={triggerLabel}>
           <ActionIcon variant="subtle" color="gray" aria-label={triggerLabel}>
-            <TriggerIcon size={18} stroke={1.5} />
+            <TriggerIcon size={20} stroke={1.5} />
           </ActionIcon>
         </Tooltip>
       </Menu.Target>
@@ -53,7 +53,7 @@ export function ColorSchemeToggle() {
           return (
             <Menu.Item
               key={option.value}
-              leftSection={<OptionIcon size={16} stroke={1.5} />}
+              leftSection={<OptionIcon size={20} stroke={1.5} />}
               rightSection={isActive ? <IconCheck size={14} /> : null}
               onClick={() => setColorScheme(option.value)}
             >
