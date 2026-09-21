@@ -9,6 +9,7 @@ import {
   Pagination,
   Select,
   Group,
+  TextInput,
 } from '@mantine/core';
 import { useInvoices } from './useInvoices';
 import { InvoicesTable } from './InvoicesTable';
@@ -19,6 +20,7 @@ type InvoicesPageProps = {
   onSortChange: (field: InvoiceSortField) => void;
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
+  onQueryChange: (q: string) => void;
 };
 
 export function InvoicesPage({
@@ -26,6 +28,7 @@ export function InvoicesPage({
   onSortChange,
   onPageChange,
   onPageSizeChange,
+  onQueryChange,
 }: InvoicesPageProps) {
   const { data, isPending, isError, isSuccess } = useInvoices(search);
 
@@ -95,6 +98,12 @@ export function InvoicesPage({
     <Container size="lg" py="xl">
       <Stack gap="xs" pb="xl">
         <Title order={1}>Invoices</Title>
+        <TextInput
+          label="Search invoices"
+          value={search.q}
+          placeholder="Customer or invoice number"
+          onChange={(e) => onQueryChange(e.currentTarget.value)}
+        />
       </Stack>
       {renderContent()}
     </Container>

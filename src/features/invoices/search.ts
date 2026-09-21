@@ -6,6 +6,7 @@ const DEFAULT_INVOICE_SEARCH: InvoiceListSearch = {
   pageSize: 25,
   sort: 'dueAt',
   dir: 'asc',
+  q: '',
 };
 
 function toPositiveInteger(value: unknown, fallback: number) {
@@ -37,11 +38,14 @@ export function parseInvoiceListSearch(
       ? raw.dir
       : DEFAULT_INVOICE_SEARCH.dir;
 
+  const q = typeof raw.q === 'string' ? raw.q : DEFAULT_INVOICE_SEARCH.q;
+
   return {
     page,
     pageSize,
     sort,
     dir,
+    q,
   };
 }
 

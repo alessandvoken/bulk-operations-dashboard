@@ -35,4 +35,5 @@ export type InvoiceListSearch = {
   pageSize: number;
   sort: InvoiceSortField;
   dir: 'asc' | 'desc';
+  q: string;
 };

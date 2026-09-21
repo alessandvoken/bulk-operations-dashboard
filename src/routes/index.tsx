@@ -32,11 +32,18 @@ function RouteComponent() {
     });
   }
 
+  function handleQueryChange(q: string) {
+    navigate({
+      search: (prev) => ({ ...prev, q, page: 1 }),
+    });
+  }
+
   return (
     <InvoicesPage
       onSortChange={handleSortChange}
       onPageChange={handlePageChange}
       onPageSizeChange={handlePageSizeChange}
+      onQueryChange={handleQueryChange}
       search={search}
     />
   );
