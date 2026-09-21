@@ -78,6 +78,7 @@ export function InvoicesPage({
             />
             <Select
               label="Rows per page"
+              checkIconPosition="right"
               data={['10', '25', '50']}
               value={String(search.pageSize)}
               onChange={(value) => {
@@ -99,7 +100,11 @@ export function InvoicesPage({
       <Stack gap="xs" pb="xl">
         <Title order={1}>Invoices</Title>
         <TextInput
+          maw={280}
+          w="100%"
+
           label="Search invoices"
+
           value={search.q}
           placeholder="Customer or invoice number"
           onChange={(e) => onQueryChange(e.currentTarget.value)}
