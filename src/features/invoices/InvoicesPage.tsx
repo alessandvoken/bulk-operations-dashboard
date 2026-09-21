@@ -7,6 +7,8 @@ import {
   Title,
   Text,
   Pagination,
+  Select,
+  Group,
 } from '@mantine/core';
 import { useInvoices } from './useInvoices';
 import { InvoicesTable } from './InvoicesTable';
@@ -16,12 +18,14 @@ type InvoicesPageProps = {
   search: InvoiceListSearch;
   onSortChange: (field: InvoiceSortField) => void;
   onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
 };
 
 export function InvoicesPage({
   search,
   onSortChange,
   onPageChange,
+  onPageSizeChange,
 }: InvoicesPageProps) {
   const { data, isPending, isError, isSuccess } = useInvoices(search);
 
@@ -30,11 +34,9 @@ export function InvoicesPage({
       return (
         <Stack gap="sm">
           <Skeleton height={32} />
-          <Skeleton height={24} />
-          <Skeleton height={24} />
-          <Skeleton height={24} />
-          <Skeleton height={24} />
-          <Skeleton height={24} />
+          {Array.from({ length: search.pageSize }, (_, index) => (
+            <Skeleton key={index} height={24} />
+          ))}
         </Stack>
       );
     }
@@ -65,11 +67,23 @@ export function InvoicesPage({
             dir={search.dir}
             onSortChange={onSortChange}
           />
-          <Pagination
-            total={totalPages}
-            value={search.page}
-            onChange={onPageChange}
-          />
+          <Group justify="space-between" align="flex-end">
+            <Pagination
+              total={totalPages}
+              value={search.page}
+              onChange={onPageChange}
+            />
+            <Select
+              label="Rows per page"
+              data={['10', '25', '50']}
+              value={String(search.pageSize)}
+              onChange={(value) => {
+                if (value !== null) {
+                  onPageSizeChange(Number(value));
+                }
+              }}
+            />
+          </Group>
         </Stack>
       );
     }

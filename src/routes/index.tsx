@@ -26,11 +26,17 @@ function RouteComponent() {
       search: (prev) => ({ ...prev, page }),
     });
   }
+  function handlePageSizeChange(pageSize: number) {
+    navigate({
+      search: (prev) => ({ ...prev, pageSize, page: 1 }),
+    });
+  }
 
   return (
     <InvoicesPage
       onSortChange={handleSortChange}
       onPageChange={handlePageChange}
+      onPageSizeChange={handlePageSizeChange}
       search={search}
     />
   );
