@@ -9,13 +9,14 @@ import {
 } from '@mantine/core';
 import { useInvoices } from './useInvoices';
 import { InvoicesTable } from './InvoicesTable';
-import type { InvoiceListSearch } from './types';
+import type { InvoiceListSearch, InvoiceSortField } from './types';
 
 type InvoicesPageProps = {
   search: InvoiceListSearch;
+  onSortChange: (field: InvoiceSortField) => void;
 };
 
-export function InvoicesPage({ search }: InvoicesPageProps) {
+export function InvoicesPage({ search, onSortChange }: InvoicesPageProps) {
   const { data, isPending, isError, isSuccess } = useInvoices(search);
 
   function renderContent() {
@@ -49,7 +50,14 @@ export function InvoicesPage({ search }: InvoicesPageProps) {
         );
       }
 
-      return <InvoicesTable rows={data.rows} />;
+      return (
+        <InvoicesTable
+          rows={data.rows}
+          sort={search.sort}
+          dir={search.dir}
+          onSortChange={onSortChange}
+        />
+      );
     }
 
     return null;

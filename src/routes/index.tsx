@@ -1,6 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { InvoicesPage } from '@/features/invoices/InvoicesPage';
 import { INVOICE_SORT_FIELDS } from '@/features/invoices/types';
+
 import type {
   InvoiceListSearch,
   InvoiceSortField,
@@ -23,9 +24,10 @@ export const Route = createFileRoute('/')({
     const sort = isInvoiceSortField(search.sort)
       ? search.sort
       : DEFAULT_INVOICE_SEARCH.sort;
-    const dir = search.dir === 'asc' || search.dir === 'desc'
-      ? search.dir
-      : DEFAULT_INVOICE_SEARCH.dir;
+    const dir =
+      search.dir === 'asc' || search.dir === 'desc'
+        ? search.dir
+        : DEFAULT_INVOICE_SEARCH.dir;
 
     return {
       page,
@@ -51,7 +53,19 @@ function isInvoiceSortField(value: unknown): value is InvoiceSortField {
 }
 
 function RouteComponent() {
+  const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
-  return <InvoicesPage search={search} />;
+  function handleSortChange(field: InvoiceSortField) {
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        sort: field,
+        dir: prev.sort === field && prev.dir === 'asc' ? 'desc' : 'asc',
+        page: 1,
+      }),
+    });
+  }
+
+  return <InvoicesPage onSortChange={handleSortChange} search={search} />;
 }
