@@ -62,6 +62,7 @@ export function InvoicesPage({ search, onSortChange }: InvoicesPageProps) {
 
     return null;
   }
+
   return (
     <Container size="lg" py="xl">
       <Stack gap="xs" pb="xl">

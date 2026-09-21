@@ -37,6 +37,15 @@ export function InvoicesTable({
   dir,
   onSortChange,
 }: InvoicesTableProps) {
+  function getAriaSort(
+    field: InvoiceSortField,
+  ): 'ascending' | 'descending' | 'none' {
+    if (sort !== field) {
+      return 'none';
+    }
+    return dir === 'asc' ? 'ascending' : 'descending';
+  }
+
   function renderSortableHeader(
     field: InvoiceSortField,
     label: string,
@@ -45,7 +54,12 @@ export function InvoicesTable({
     const isActive = sort === field;
 
     return (
-      <UnstyledButton onClick={() => onSortChange(field)} fw={600} fz="sm">
+      <UnstyledButton
+        onClick={() => onSortChange(field)}
+        fw={600}
+        fz="sm"
+        aria-label={`Sort by ${label}, currently ${getAriaSort(field)}`}
+      >
         <Group gap={4} justify={justify} wrap="nowrap">
           <span>{label}</span>
           {isActive ? (
@@ -65,14 +79,16 @@ export function InvoicesTable({
       <Table highlightOnHover tabularNums layout="fixed">
         <Table.Thead>
           <Table.Tr>
-            <Table.Th w="26%">
+            <Table.Th aria-sort={getAriaSort('customerName')} w="26%">
               {renderSortableHeader('customerName', 'Customer')}
             </Table.Th>
-            <Table.Th w="18%">
+            <Table.Th aria-sort={getAriaSort('number')} w="18%">
               {renderSortableHeader('number', 'Invoice')}
             </Table.Th>
-            <Table.Th w="14%">{renderSortableHeader('dueAt', 'Due')}</Table.Th>
-            <Table.Th w="16%" ta="right">
+            <Table.Th aria-sort={getAriaSort('dueAt')} w="14%">
+              {renderSortableHeader('dueAt', 'Due')}
+            </Table.Th>
+            <Table.Th aria-sort={getAriaSort('amountCents')} w="16%" ta="right">
               {renderSortableHeader('amountCents', 'Amount', 'flex-end')}
             </Table.Th>
             <Table.Th w="14%">Status</Table.Th>
