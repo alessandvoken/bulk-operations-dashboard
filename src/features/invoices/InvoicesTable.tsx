@@ -82,7 +82,7 @@ export function InvoicesTable({
 
   return (
     <Table.ScrollContainer minWidth={720}>
-      <Table highlightOnHover tabularNums layout="fixed">
+      <Table layout="fixed" highlightOnHover tabularNums>
         <Table.Thead>
           <Table.Tr>
             <Table.Th aria-sort={getAriaSort('customerName')} w="26%">

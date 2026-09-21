@@ -34,6 +34,7 @@ function RouteComponent() {
 
   function handleQueryChange(q: string) {
     navigate({
+      replace: true,
       search: (prev) => ({ ...prev, q, page: 1 }),
     });
   }
