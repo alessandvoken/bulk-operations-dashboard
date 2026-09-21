@@ -21,5 +21,17 @@ function RouteComponent() {
     });
   }
 
-  return <InvoicesPage onSortChange={handleSortChange} search={search} />;
+  function handlePageChange(page: number) {
+    navigate({
+      search: (prev) => ({ ...prev, page }),
+    });
+  }
+
+  return (
+    <InvoicesPage
+      onSortChange={handleSortChange}
+      onPageChange={handlePageChange}
+      search={search}
+    />
+  );
 }

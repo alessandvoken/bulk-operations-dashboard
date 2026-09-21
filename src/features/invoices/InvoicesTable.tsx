@@ -4,7 +4,11 @@ import type {
   InvoiceStatus,
 } from '@/features/invoices/types';
 import { Badge, Group, Table, UnstyledButton } from '@mantine/core';
-import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconSelector,
+} from '@tabler/icons-react';
 import { formatMoney } from '@/lib/money';
 import { formatDate } from '@/lib/date';
 
@@ -68,7 +72,9 @@ export function InvoicesTable({
             ) : (
               <IconChevronDown aria-hidden="true" size={14} stroke={2} />
             )
-          ) : null}
+          ) : (
+            <IconSelector aria-hidden="true" size={14} stroke={2} />
+          )}
         </Group>
       </UnstyledButton>
     );

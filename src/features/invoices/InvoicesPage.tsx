@@ -6,6 +6,7 @@ import {
   Stack,
   Title,
   Text,
+  Pagination,
 } from '@mantine/core';
 import { useInvoices } from './useInvoices';
 import { InvoicesTable } from './InvoicesTable';
@@ -14,9 +15,14 @@ import type { InvoiceListSearch, InvoiceSortField } from './types';
 type InvoicesPageProps = {
   search: InvoiceListSearch;
   onSortChange: (field: InvoiceSortField) => void;
+  onPageChange: (page: number) => void;
 };
 
-export function InvoicesPage({ search, onSortChange }: InvoicesPageProps) {
+export function InvoicesPage({
+  search,
+  onSortChange,
+  onPageChange,
+}: InvoicesPageProps) {
   const { data, isPending, isError, isSuccess } = useInvoices(search);
 
   function renderContent() {
@@ -42,6 +48,7 @@ export function InvoicesPage({ search, onSortChange }: InvoicesPageProps) {
     }
 
     if (isSuccess) {
+      const totalPages = Math.ceil(data.total / search.pageSize);
       if (data.rows.length === 0) {
         return (
           <Paper withBorder p="md" radius="md">
@@ -51,12 +58,19 @@ export function InvoicesPage({ search, onSortChange }: InvoicesPageProps) {
       }
 
       return (
-        <InvoicesTable
-          rows={data.rows}
-          sort={search.sort}
-          dir={search.dir}
-          onSortChange={onSortChange}
-        />
+        <Stack>
+          <InvoicesTable
+            rows={data.rows}
+            sort={search.sort}
+            dir={search.dir}
+            onSortChange={onSortChange}
+          />
+          <Pagination
+            total={totalPages}
+            value={search.page}
+            onChange={onPageChange}
+          />
+        </Stack>
       );
     }
 
