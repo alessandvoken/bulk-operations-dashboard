@@ -1,6 +1,8 @@
 import type { InvoiceListSearch, InvoiceSortField } from './types';
 import { INVOICE_SORT_FIELDS } from './types';
 
+const INVOICE_PAGE_SIZES = [10, 25, 50] as const;
+
 const DEFAULT_INVOICE_SEARCH: InvoiceListSearch = {
   page: 1,
   pageSize: 25,
@@ -26,10 +28,13 @@ export function parseInvoiceListSearch(
   raw: Record<string, unknown>,
 ): InvoiceListSearch {
   const page = toPositiveInteger(raw.page, DEFAULT_INVOICE_SEARCH.page);
-  const pageSize = toPositiveInteger(
-    raw.pageSize,
-    DEFAULT_INVOICE_SEARCH.pageSize,
-  );
+
+  const parsedPageSize = Number(raw.pageSize);
+
+  const pageSize = INVOICE_PAGE_SIZES.some((size) => size === parsedPageSize)
+    ? parsedPageSize
+    : DEFAULT_INVOICE_SEARCH.pageSize;
+
   const sort = isInvoiceSortField(raw.sort)
     ? raw.sort
     : DEFAULT_INVOICE_SEARCH.sort;
