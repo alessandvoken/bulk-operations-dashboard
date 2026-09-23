@@ -9,13 +9,11 @@ import {
   Pagination,
   Select,
   Group,
-  TextInput,
 } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
+import { InvoiceSearchInput } from './InvoiceSearchInput';
 import { useInvoices } from './useInvoices';
 import { InvoicesTable } from './InvoicesTable';
 import type { InvoiceListSearch, InvoiceSortField } from './types';
-import { useState, useEffect } from 'react';
 
 type InvoicesPageProps = {
   search: InvoiceListSearch;
@@ -32,15 +30,6 @@ export function InvoicesPage({
   onPageSizeChange,
   onQueryChange,
 }: InvoicesPageProps) {
-  const [queryDraft, setQueryDraft] = useState(search.q);
-  const [debouncedQuery] = useDebouncedValue(queryDraft, 300);
-
-  useEffect(() => {
-    if (debouncedQuery !== search.q) {
-      onQueryChange(debouncedQuery);
-    }
-  }, [debouncedQuery, search.q, onQueryChange]);
-
   const { data, isPending, isError, isSuccess } = useInvoices(search);
 
   function renderContent() {
@@ -110,14 +99,7 @@ export function InvoicesPage({
     <Container size="lg" py="xl">
       <Stack gap="xs" pb="xl">
         <Title order={1}>Invoices</Title>
-        <TextInput
-          maw={280}
-          w="100%"
-          label="Search invoices"
-          value={queryDraft}
-          placeholder="Customer or invoice number"
-          onChange={(e) => setQueryDraft(e.currentTarget.value)}
-        />
+        <InvoiceSearchInput query={search.q} onQueryChange={onQueryChange} />
       </Stack>
       {renderContent()}
     </Container>
