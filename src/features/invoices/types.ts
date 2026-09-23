@@ -30,6 +30,8 @@ export const INVOICE_SORT_FIELDS = [
 
 export type InvoiceSortField = (typeof INVOICE_SORT_FIELDS)[number];
 
+export const INVOICE_PAGE_SIZES = [10, 25, 50] as const;
+
 export type InvoiceListSearch = {
   page: number;
   pageSize: number;

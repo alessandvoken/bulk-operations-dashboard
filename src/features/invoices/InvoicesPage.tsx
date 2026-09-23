@@ -13,7 +13,11 @@ import {
 import { InvoiceSearchInput } from './InvoiceSearchInput';
 import { useInvoices } from './useInvoices';
 import { InvoicesTable } from './InvoicesTable';
-import type { InvoiceListSearch, InvoiceSortField } from './types';
+import {
+  INVOICE_PAGE_SIZES,
+  type InvoiceListSearch,
+  type InvoiceSortField,
+} from './types';
 
 type InvoicesPageProps = {
   search: InvoiceListSearch;
@@ -79,7 +83,7 @@ export function InvoicesPage({
             <Select
               label="Rows per page"
               checkIconPosition="right"
-              data={['10', '25', '50']}
+              data={INVOICE_PAGE_SIZES.map(String)}
               value={String(search.pageSize)}
               onChange={(value) => {
                 if (value !== null) {

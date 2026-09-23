@@ -1,7 +1,5 @@
 import type { InvoiceListSearch, InvoiceSortField } from './types';
-import { INVOICE_SORT_FIELDS } from './types';
-
-const INVOICE_PAGE_SIZES = [10, 25, 50] as const;
+import { INVOICE_SORT_FIELDS, INVOICE_PAGE_SIZES } from './types';
 
 const DEFAULT_INVOICE_SEARCH: InvoiceListSearch = {
   page: 1,
