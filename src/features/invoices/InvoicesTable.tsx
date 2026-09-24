@@ -1,8 +1,8 @@
-import type {
-  Invoice,
-  InvoiceSortField,
-  InvoiceStatus,
-} from '@/features/invoices/types';
+import type { Invoice, InvoiceSortField } from '@/features/invoices/types';
+import {
+  INVOICE_STATUS_COLORS,
+  INVOICE_STATUS_LABELS,
+} from '@/features/invoices/status';
 import { Badge, Group, Table, UnstyledButton } from '@mantine/core';
 import {
   IconChevronDown,
@@ -17,22 +17,6 @@ type InvoicesTableProps = {
   sort: InvoiceSortField;
   dir: 'asc' | 'desc';
   onSortChange: (field: InvoiceSortField) => void;
-};
-
-const INVOICE_STATUS_COLORS: Record<InvoiceStatus, string> = {
-  draft: 'gray',
-  sent: 'blue',
-  paid: 'green',
-  overdue: 'red',
-  void: 'grape',
-};
-
-const INVOICE_STATUS_LABELS: Record<InvoiceStatus, string> = {
-  draft: 'Draft',
-  sent: 'Sent',
-  paid: 'Paid',
-  overdue: 'Overdue',
-  void: 'Void',
 };
 
 export function InvoicesTable({

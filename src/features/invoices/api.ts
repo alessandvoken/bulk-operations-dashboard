@@ -16,6 +16,10 @@ export async function fetchInvoices(
   params.set('dir', search.dir);
   params.set('q', search.q);
 
+  for (const status of search.status) {
+    params.append('status', status);
+  }
+
   const res = await fetch(`/api/invoices?${params}`);
 
   if (!res.ok) {

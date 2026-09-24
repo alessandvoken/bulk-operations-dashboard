@@ -1,5 +1,13 @@
-import type { InvoiceListSearch, InvoiceSortField } from './types';
-import { INVOICE_SORT_FIELDS, INVOICE_PAGE_SIZES } from './types';
+import type {
+  InvoiceListSearch,
+  InvoiceSortField,
+  InvoiceStatus,
+} from './types';
+import {
+  INVOICE_SORT_FIELDS,
+  INVOICE_PAGE_SIZES,
+  INVOICE_STATUSES,
+} from './types';
 
 const DEFAULT_INVOICE_SEARCH: InvoiceListSearch = {
   page: 1,
@@ -7,6 +15,7 @@ const DEFAULT_INVOICE_SEARCH: InvoiceListSearch = {
   sort: 'dueAt',
   dir: 'asc',
   q: '',
+  status: [],
 };
 
 function toPositiveInteger(value: unknown, fallback: number) {
@@ -20,6 +29,16 @@ function isInvoiceSortField(value: unknown): value is InvoiceSortField {
     typeof value === 'string' &&
     INVOICE_SORT_FIELDS.includes(value as InvoiceSortField)
   );
+}
+
+function parseInvoiceStatuses(value: unknown): InvoiceStatus[] {
+  const candidates: unknown[] = Array.isArray(value)
+    ? value
+    : typeof value === 'string'
+      ? [value]
+      : [];
+
+  return INVOICE_STATUSES.filter((status) => candidates.includes(status));
 }
 
 export function parseInvoiceListSearch(
@@ -43,12 +62,15 @@ export function parseInvoiceListSearch(
 
   const q = typeof raw.q === 'string' ? raw.q : DEFAULT_INVOICE_SEARCH.q;
 
+  const status = parseInvoiceStatuses(raw.status);
+
   return {
     page,
     pageSize,
     sort,
     dir,
     q,
+    status,
   };
 }
 

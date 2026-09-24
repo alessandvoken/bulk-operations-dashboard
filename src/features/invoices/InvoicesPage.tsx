@@ -12,11 +12,13 @@ import {
 } from '@mantine/core';
 import { InvoiceSearchInput } from './InvoiceSearchInput';
 import { useInvoices } from './useInvoices';
+import { InvoiceStatusFilter } from './InvoiceStatusFilter';
 import { InvoicesTable } from './InvoicesTable';
 import {
   INVOICE_PAGE_SIZES,
   type InvoiceListSearch,
   type InvoiceSortField,
+  type InvoiceStatus,
 } from './types';
 
 type InvoicesPageProps = {
@@ -25,6 +27,7 @@ type InvoicesPageProps = {
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
   onQueryChange: (q: string) => void;
+  onStatusChange: (status: InvoiceStatus[]) => void;
 };
 
 export function InvoicesPage({
@@ -33,6 +36,7 @@ export function InvoicesPage({
   onPageChange,
   onPageSizeChange,
   onQueryChange,
+  onStatusChange,
 }: InvoicesPageProps) {
   const { data, isPending, isError, isSuccess } = useInvoices(search);
 
@@ -104,6 +108,7 @@ export function InvoicesPage({
       <Stack gap="xs" pb="xl">
         <Title order={1}>Invoices</Title>
         <InvoiceSearchInput query={search.q} onQueryChange={onQueryChange} />
+        <InvoiceStatusFilter value={search.status} onChange={onStatusChange} />
       </Stack>
       {renderContent()}
     </Container>

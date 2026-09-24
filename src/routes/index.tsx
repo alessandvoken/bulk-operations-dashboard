@@ -1,6 +1,9 @@
 import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { InvoicesPage } from '@/features/invoices/InvoicesPage';
-import type { InvoiceSortField } from '@/features/invoices/types';
+import type {
+  InvoiceSortField,
+  InvoiceStatus,
+} from '@/features/invoices/types';
 import {
   nextSortSearch,
   parseInvoiceListSearch,
@@ -39,12 +42,19 @@ function RouteComponent() {
     });
   }
 
+  function handleStatusChange(status: InvoiceStatus[]) {
+    navigate({
+      search: (prev) => ({ ...prev, status, page: 1 }),
+    });
+  }
+
   return (
     <InvoicesPage
       onSortChange={handleSortChange}
       onPageChange={handlePageChange}
       onPageSizeChange={handlePageSizeChange}
       onQueryChange={handleQueryChange}
+      onStatusChange={handleStatusChange}
       search={search}
     />
   );

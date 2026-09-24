@@ -38,4 +38,5 @@ export type InvoiceListSearch = {
   sort: InvoiceSortField;
   dir: 'asc' | 'desc';
   q: string;
+  status: InvoiceStatus[];
 };
