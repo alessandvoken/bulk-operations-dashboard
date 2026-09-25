@@ -1,4 +1,4 @@
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
@@ -6,6 +6,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { routeTree } from './routeTree.gen';
 import { parseSearch, stringifySearch } from './lib/searchParams';
+
+const theme = createTheme({
+  cursorType: 'pointer',
+});
 
 const router = createRouter({
   routeTree,
@@ -40,7 +44,7 @@ async function main() {
 
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <MantineProvider defaultColorScheme="auto">
+      <MantineProvider theme={theme} defaultColorScheme="auto">
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
         </QueryClientProvider>
