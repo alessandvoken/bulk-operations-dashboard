@@ -3,7 +3,7 @@ import {
   INVOICE_STATUS_COLORS,
   INVOICE_STATUS_LABELS,
 } from '@/features/invoices/status';
-import { Badge, Group, Table, UnstyledButton } from '@mantine/core';
+import { Badge, Group, Table, UnstyledButton, Checkbox } from '@mantine/core';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -17,6 +17,8 @@ type InvoicesTableProps = {
   sort: InvoiceSortField;
   dir: 'asc' | 'desc';
   onSortChange: (field: InvoiceSortField) => void;
+  selected: Record<string, boolean>;
+  onRowToggle: (id: string) => void;
 };
 
 export function InvoicesTable({
@@ -24,6 +26,8 @@ export function InvoicesTable({
   sort,
   dir,
   onSortChange,
+  selected,
+  onRowToggle,
 }: InvoicesTableProps) {
   function getAriaSort(
     field: InvoiceSortField,
@@ -69,6 +73,7 @@ export function InvoicesTable({
       <Table layout="fixed" highlightOnHover tabularNums>
         <Table.Thead>
           <Table.Tr>
+            <Table.Th w={40}></Table.Th>
             <Table.Th aria-sort={getAriaSort('customerName')} w="26%">
               {renderSortableHeader('customerName', 'Customer')}
             </Table.Th>
@@ -88,6 +93,14 @@ export function InvoicesTable({
         <Table.Tbody>
           {rows.map((invoice) => (
             <Table.Tr key={invoice.id}>
+              <Table.Td>
+                <Checkbox
+                  aria-label={`Select invoice ${invoice.number}`}
+                  onChange={() => onRowToggle(invoice.id)}
+                  checked={selected[invoice.id] ?? false}
+                />
+              </Table.Td>
+
               <Table.Td>{invoice.customerName}</Table.Td>
               <Table.Td>{invoice.number}</Table.Td>
               <Table.Td>{formatDate(invoice.dueAt)}</Table.Td>

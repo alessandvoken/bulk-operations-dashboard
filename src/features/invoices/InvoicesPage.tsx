@@ -20,6 +20,7 @@ import {
   type InvoiceSortField,
   type InvoiceStatus,
 } from './types';
+import { useRowSelection } from '@/hooks/useRowSelection';
 
 type InvoicesPageProps = {
   search: InvoiceListSearch;
@@ -39,6 +40,7 @@ export function InvoicesPage({
   onStatusChange,
 }: InvoicesPageProps) {
   const { data, isPending, isError, isSuccess } = useInvoices(search);
+  const { selected, toggle } = useRowSelection();
 
   function renderContent() {
     if (isPending) {
@@ -77,6 +79,8 @@ export function InvoicesPage({
             sort={search.sort}
             dir={search.dir}
             onSortChange={onSortChange}
+            selected={selected}
+            onRowToggle={toggle}
           />
           <Group justify="space-between" align="flex-end">
             <Pagination
