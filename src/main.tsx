@@ -5,11 +5,14 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { routeTree } from './routeTree.gen';
+import { parseSearch, stringifySearch } from './lib/searchParams';
 
 const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
   scrollRestoration: true,
+  parseSearch,
+  stringifySearch,
 });
 
 declare module '@tanstack/react-router' {
