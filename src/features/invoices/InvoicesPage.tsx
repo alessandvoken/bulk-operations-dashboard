@@ -10,6 +10,7 @@ import {
   Select,
   Group,
 } from '@mantine/core';
+import { SelectionBar } from '@/components/SelectionBar';
 import { InvoiceSearchInput } from './InvoiceSearchInput';
 import { useInvoices } from './useInvoices';
 import { InvoiceStatusFilter } from './InvoiceStatusFilter';
@@ -40,7 +41,7 @@ export function InvoicesPage({
   onStatusChange,
 }: InvoicesPageProps) {
   const { data, isPending, isError, isSuccess } = useInvoices(search);
-  const { selected, toggle, setMany } = useRowSelection();
+  const { selected, toggle, setMany, selectedIds, clear } = useRowSelection();
 
   function renderContent() {
     if (isPending) {
@@ -110,11 +111,12 @@ export function InvoicesPage({
 
   return (
     <Container size="lg" py="xl">
-      <Stack gap="xs" pb="xl">
+      <Stack gap="xs" pb="lg">
         <Title order={1}>Invoices</Title>
         <InvoiceSearchInput query={search.q} onQueryChange={onQueryChange} />
         <InvoiceStatusFilter value={search.status} onChange={onStatusChange} />
       </Stack>
+      <SelectionBar count={selectedIds.length} onClear={clear} />
       {renderContent()}
     </Container>
   );

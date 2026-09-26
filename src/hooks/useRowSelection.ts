@@ -21,5 +21,11 @@ export function useRowSelection() {
     }));
   }
 
-  return { selected, toggle, setMany };
+  function clear() {
+    setSelected({});
+  }
+
+  const selectedIds = Object.keys(selected).filter((id) => selected[id]);
+
+  return { selected, toggle, setMany, selectedIds, clear };
 }
