@@ -1,7 +1,13 @@
 import { useState } from 'react';
 
-export function useRowSelection() {
+export function useRowSelection(scopeKey: string) {
   const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [prevScopeKey, setPrevScopeKey] = useState(scopeKey);
+
+  if (scopeKey !== prevScopeKey) {
+    setPrevScopeKey(scopeKey);
+    setSelected({});
+  }
 
   function toggle(id: string) {
     setSelected((prev) => ({

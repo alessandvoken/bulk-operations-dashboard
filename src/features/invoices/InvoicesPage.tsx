@@ -41,7 +41,9 @@ export function InvoicesPage({
   onStatusChange,
 }: InvoicesPageProps) {
   const { data, isPending, isError, isSuccess } = useInvoices(search);
-  const { selected, toggle, setMany, selectedIds, clear } = useRowSelection();
+  const selectionScope = JSON.stringify([search.q, search.status]);
+  const { selected, toggle, setMany, selectedIds, clear } =
+    useRowSelection(selectionScope);
 
   function renderContent() {
     if (isPending) {
