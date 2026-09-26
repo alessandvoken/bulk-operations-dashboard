@@ -19,6 +19,7 @@ type InvoicesTableProps = {
   onSortChange: (field: InvoiceSortField) => void;
   selected: Record<string, boolean>;
   onRowToggle: (id: string) => void;
+  onRowsSelect: (ids: string[], isSelected: boolean) => void;
 };
 
 export function InvoicesTable({
@@ -28,6 +29,7 @@ export function InvoicesTable({
   onSortChange,
   selected,
   onRowToggle,
+  onRowsSelect,
 }: InvoicesTableProps) {
   function getAriaSort(
     field: InvoiceSortField,
@@ -68,12 +70,27 @@ export function InvoicesTable({
     );
   }
 
+  const allSelected = rows.every((el) => selected[el.id]);
+  const someSelected = rows.some((el) => selected[el.id]);
+
   return (
     <Table.ScrollContainer minWidth={720}>
       <Table layout="fixed" highlightOnHover tabularNums>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th w={40}></Table.Th>
+            <Table.Th w={40}>
+              <Checkbox
+                aria-label="Select all invoices on this page"
+                checked={allSelected}
+                indeterminate={someSelected && !allSelected}
+                onChange={() =>
+                  onRowsSelect(
+                    rows.map((el) => el.id),
+                    !allSelected,
+                  )
+                }
+              />
+            </Table.Th>
             <Table.Th aria-sort={getAriaSort('customerName')} w="26%">
               {renderSortableHeader('customerName', 'Customer')}
             </Table.Th>

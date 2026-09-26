@@ -40,7 +40,7 @@ export function InvoicesPage({
   onStatusChange,
 }: InvoicesPageProps) {
   const { data, isPending, isError, isSuccess } = useInvoices(search);
-  const { selected, toggle } = useRowSelection();
+  const { selected, toggle, setMany } = useRowSelection();
 
   function renderContent() {
     if (isPending) {
@@ -81,6 +81,7 @@ export function InvoicesPage({
             onSortChange={onSortChange}
             selected={selected}
             onRowToggle={toggle}
+            onRowsSelect={setMany}
           />
           <Group justify="space-between" align="flex-end">
             <Pagination

@@ -10,5 +10,16 @@ export function useRowSelection() {
     }));
   }
 
-  return { selected, toggle };
+  function setMany(ids: string[], isSelected: boolean) {
+    const changes: Record<string, boolean> = {};
+    for (const id of ids) {
+      changes[id] = isSelected;
+    }
+    setSelected((prev) => ({
+      ...prev,
+      ...changes,
+    }));
+  }
+
+  return { selected, toggle, setMany };
 }
