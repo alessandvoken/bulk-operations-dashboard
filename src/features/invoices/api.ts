@@ -1,8 +1,16 @@
-import type { Invoice, InvoiceListSearch } from './types';
+import type { Invoice, InvoiceListSearch, ReminderResult } from './types';
 
 export type InvoiceListResponse = {
   rows: Invoice[];
   total: number;
+};
+
+export type SendRemindersRequest = {
+  ids: string[];
+};
+
+export type SendRemindersResponse = {
+  results: ReminderResult[];
 };
 
 export async function fetchInvoices(
@@ -26,4 +34,24 @@ export async function fetchInvoices(
     throw new Error(`fetchInvoices ${res.status}`);
   }
   return res.json();
+}
+
+export async function sendReminders(ids: string[]): Promise<ReminderResult[]> {
+  const payload: SendRemindersRequest = {
+    ids,
+  };
+
+  const res = await fetch('/api/invoices/reminders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error(`sendReminders ${res.status}`);
+  }
+
+  const body: SendRemindersResponse = await res.json();
+
+  return body.results;
 }

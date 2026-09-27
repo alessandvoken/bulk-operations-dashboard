@@ -40,3 +40,18 @@ export type InvoiceListSearch = {
   q: string;
   status: InvoiceStatus[];
 };
+
+export interface ReminderSuccess {
+  id: string;
+  ok: true;
+  remindersSent: number;
+}
+
+export interface ReminderFailure {
+  id: string;
+  ok: false;
+  error: string;
+  retryable: boolean;
+}
+
+export type ReminderResult = ReminderSuccess | ReminderFailure;

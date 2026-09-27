@@ -1,4 +1,8 @@
-import type { Invoice, InvoiceStatus } from '@/features/invoices/types';
+import type {
+  Invoice,
+  InvoiceStatus,
+  ReminderResult,
+} from '@/features/invoices/types';
 import { generateInvoices } from './data';
 
 export interface MockConfig {
@@ -66,21 +70,6 @@ export function listInvoices(params: ListParams): ListResult {
     total: filtered.length,
   };
 }
-
-export interface ReminderSuccess {
-  id: string;
-  ok: true;
-  remindersSent: number;
-}
-
-export interface ReminderFailure {
-  id: string;
-  ok: false;
-  error: string;
-  retryable: boolean;
-}
-
-export type ReminderResult = ReminderSuccess | ReminderFailure;
 
 const TRANSIENT_ERRORS = [
   'Mail provider timed out',
