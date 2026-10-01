@@ -11,7 +11,7 @@ import {
 
 const DEFAULT_INVOICE_SEARCH: InvoiceListSearch = {
   page: 1,
-  pageSize: 25,
+  pageSize: 10,
   sort: 'dueAt',
   dir: 'asc',
   q: '',
