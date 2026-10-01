@@ -9,6 +9,7 @@ import {
   Pagination,
   Select,
   Group,
+  Button,
 } from '@mantine/core';
 import { SelectionBar } from '@/components/SelectionBar';
 import { InvoiceSearchInput } from './InvoiceSearchInput';
@@ -22,6 +23,11 @@ import {
   type InvoiceStatus,
 } from './types';
 import { useRowSelection } from '@/hooks/useRowSelection';
+import { useBulkOperations } from '@/hooks/useBulkOperations';
+import { sendReminders, REMINDERS_BATCH_SIZE } from './api';
+import { useRef } from 'react';
+
+import { flushSync } from 'react-dom';
 
 type InvoicesPageProps = {
   search: InvoiceListSearch;
@@ -44,6 +50,20 @@ export function InvoicesPage({
   const selectionScope = JSON.stringify([search.q, search.status]);
   const { selected, toggle, setMany, selectedIds, clear } =
     useRowSelection(selectionScope);
+
+  const { run, status } = useBulkOperations({
+    operation: sendReminders,
+    batchSize: REMINDERS_BATCH_SIZE,
+  });
+
+  const selectAllRef = useRef<HTMLInputElement>(null);
+
+  function handleClear() {
+    flushSync(() => {
+      clear();
+    });
+    selectAllRef.current?.focus();
+  }
 
   function renderContent() {
     if (isPending) {
@@ -85,6 +105,7 @@ export function InvoicesPage({
             selected={selected}
             onRowToggle={toggle}
             onRowsSelect={setMany}
+            selectAllRef={selectAllRef}
           />
           <Group justify="space-between" align="flex-end">
             <Pagination
@@ -112,14 +133,27 @@ export function InvoicesPage({
   }
 
   return (
-    <Container size="lg" py="xl">
-      <Stack gap="xs" pb="lg">
+    <Container size="lg" py="lg">
+      <Stack gap="md" pb="lg">
         <Title order={1}>Invoices</Title>
         <InvoiceSearchInput query={search.q} onQueryChange={onQueryChange} />
         <InvoiceStatusFilter value={search.status} onChange={onStatusChange} />
       </Stack>
-      <SelectionBar count={selectedIds.length} onClear={clear} />
-      {renderContent()}
+      <Stack gap="xs">
+        <SelectionBar count={selectedIds.length} onClear={handleClear}>
+          <Button
+            size="xs"
+            onClick={() => {
+              run(selectedIds);
+            }}
+            data-disabled={status === 'running'}
+            aria-disabled={status === 'running'}
+          >
+            Send reminders
+          </Button>
+        </SelectionBar>
+        {renderContent()}
+      </Stack>
     </Container>
   );
 }

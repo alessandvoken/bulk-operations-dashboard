@@ -15,7 +15,7 @@ export function InvoiceStatusFilter({
   const labelId = useId();
 
   return (
-    <Stack gap={4} role="group" aria-labelledby={labelId}>
+    <Stack gap={4} pt="sm" role="group" aria-labelledby={labelId}>
       <Input.Label id={labelId} labelElement="div">
         Status
       </Input.Label>

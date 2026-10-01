@@ -36,6 +36,8 @@ export async function fetchInvoices(
   return res.json();
 }
 
+export const REMINDERS_BATCH_SIZE = 50;
+
 export async function sendReminders(ids: string[]): Promise<ReminderResult[]> {
   const payload: SendRemindersRequest = {
     ids,

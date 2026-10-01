@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-react';
 import { formatMoney } from '@/lib/money';
 import { formatDate } from '@/lib/date';
+import type { Ref } from 'react';
 
 type InvoicesTableProps = {
   rows: Invoice[];
@@ -20,6 +21,7 @@ type InvoicesTableProps = {
   selected: Record<string, boolean>;
   onRowToggle: (id: string) => void;
   onRowsSelect: (ids: string[], isSelected: boolean) => void;
+  selectAllRef: Ref<HTMLInputElement>;
 };
 
 export function InvoicesTable({
@@ -30,6 +32,7 @@ export function InvoicesTable({
   selected,
   onRowToggle,
   onRowsSelect,
+  selectAllRef,
 }: InvoicesTableProps) {
   function getAriaSort(
     field: InvoiceSortField,
@@ -82,6 +85,7 @@ export function InvoicesTable({
               <Checkbox
                 aria-label="Select all invoices on this page"
                 checked={allSelected}
+                ref={selectAllRef}
                 indeterminate={someSelected && !allSelected}
                 onChange={() =>
                   onRowsSelect(
@@ -125,7 +129,11 @@ export function InvoicesTable({
                 {formatMoney(invoice.amountCents, invoice.currency)}
               </Table.Td>
               <Table.Td>
-                <Badge tt="none" color={INVOICE_STATUS_COLORS[invoice.status]}>
+                <Badge
+                  tt="none"
+                  variant="outline"
+                  color={INVOICE_STATUS_COLORS[invoice.status]}
+                >
                   {INVOICE_STATUS_LABELS[invoice.status]}
                 </Badge>
               </Table.Td>
