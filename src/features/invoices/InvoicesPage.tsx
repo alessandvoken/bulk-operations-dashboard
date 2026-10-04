@@ -28,6 +28,7 @@ import { sendReminders, REMINDERS_BATCH_SIZE } from './api';
 import { useRef } from 'react';
 
 import { flushSync } from 'react-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 type InvoicesPageProps = {
   search: InvoiceListSearch;
@@ -55,6 +56,8 @@ export function InvoicesPage({
     operation: sendReminders,
     batchSize: REMINDERS_BATCH_SIZE,
   });
+
+  const queryClient = useQueryClient();
 
   const selectAllRef = useRef<HTMLInputElement>(null);
 
@@ -143,8 +146,9 @@ export function InvoicesPage({
         <SelectionBar count={selectedIds.length} onClear={handleClear}>
           <Button
             size="xs"
-            onClick={() => {
-              run(selectedIds);
+            onClick={async () => {
+              await run(selectedIds);
+              queryClient.invalidateQueries({ queryKey: ['invoices'] });
             }}
             data-disabled={status === 'running'}
             aria-disabled={status === 'running'}
