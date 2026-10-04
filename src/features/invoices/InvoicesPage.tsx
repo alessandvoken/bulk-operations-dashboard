@@ -10,6 +10,7 @@ import {
   Select,
   Group,
   Button,
+  Tooltip,
 } from '@mantine/core';
 import { SelectionBar } from '@/components/SelectionBar';
 import { InvoiceSearchInput } from './InvoiceSearchInput';
@@ -65,6 +66,8 @@ export function InvoicesPage({
     operation: sendReminders,
     batchSize: REMINDERS_BATCH_SIZE,
   });
+
+  const permanentFailures = failed - retryableIds.length;
 
   const queryClient = useQueryClient();
 
@@ -183,9 +186,16 @@ export function InvoicesPage({
           messageActions={
             status === 'done' &&
             retryableIds.length > 0 && (
-              <Button size="xs" variant="default" onClick={handleRetry}>
-                Retry {retryableIds.length} failed
-              </Button>
+              <Tooltip
+                label="Only temporary errors can be retried"
+                events={{ hover: true, focus: true, touch: false }}
+                disabled={permanentFailures === 0}
+                withArrow
+              >
+                <Button size="xs" variant="default" onClick={handleRetry}>
+                  Retry {retryableIds.length} failed
+                </Button>
+              </Tooltip>
             )
           }
         >
@@ -195,7 +205,7 @@ export function InvoicesPage({
             data-disabled={status === 'running'}
             aria-disabled={status === 'running'}
           >
-            Send reminders
+            {selectedIds.length === 1 ? 'Send reminder' : 'Send reminders'}
           </Button>
         </SelectionBar>
         {renderContent()}
