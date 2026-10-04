@@ -89,6 +89,12 @@ export function useBulkOperations({
 
   const total = state.runIds.length;
   const processed = state.runIds.filter((id) => id in state.outcomes).length;
+  const succeeded = state.runIds.filter(
+    (id) => id in state.outcomes && state.outcomes[id].ok,
+  ).length;
+
+  const failed = processed - succeeded;
+
   const retryableIds = state.runIds.filter(
     (id) =>
       id in state.outcomes &&
@@ -103,5 +109,7 @@ export function useBulkOperations({
     processed,
     retryableIds,
     run,
+    succeeded,
+    failed,
   };
 }

@@ -52,10 +52,11 @@ export function InvoicesPage({
   const { selected, toggle, setMany, selectedIds, clear } =
     useRowSelection(selectionScope);
 
-  const { run, status, total, processed } = useBulkOperations({
-    operation: sendReminders,
-    batchSize: REMINDERS_BATCH_SIZE,
-  });
+  const { run, status, total, processed, outcomes, succeeded, failed } =
+    useBulkOperations({
+      operation: sendReminders,
+      batchSize: REMINDERS_BATCH_SIZE,
+    });
 
   const queryClient = useQueryClient();
 
@@ -73,7 +74,7 @@ export function InvoicesPage({
       return `Sending reminders: ${processed} of ${total}`;
     }
     if (status === 'done') {
-      return `Reminders processed: ${processed} of ${total}`;
+      return `Reminders: ${succeeded} sent, ${failed} failed`;
     }
     return null;
   }
@@ -119,6 +120,7 @@ export function InvoicesPage({
             onRowToggle={toggle}
             onRowsSelect={setMany}
             selectAllRef={selectAllRef}
+            outcomes={outcomes}
           />
           <Group justify="space-between" align="flex-end">
             <Pagination
@@ -146,7 +148,7 @@ export function InvoicesPage({
   }
 
   return (
-    <Container size="lg" py="lg">
+    <Container size="xl" py="lg">
       <Stack gap="md" pb="lg">
         <Title order={1}>Invoices</Title>
         <InvoiceSearchInput query={search.q} onQueryChange={onQueryChange} />

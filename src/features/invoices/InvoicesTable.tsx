@@ -3,15 +3,26 @@ import {
   INVOICE_STATUS_COLORS,
   INVOICE_STATUS_LABELS,
 } from '@/features/invoices/status';
-import { Badge, Group, Table, UnstyledButton, Checkbox } from '@mantine/core';
 import {
+  Badge,
+  Group,
+  Stack,
+  Table,
+  Text,
+  UnstyledButton,
+  Checkbox,
+} from '@mantine/core';
+import {
+  IconCheck,
   IconChevronDown,
   IconChevronUp,
   IconSelector,
+  IconX,
 } from '@tabler/icons-react';
 import { formatMoney } from '@/lib/money';
 import { formatDate } from '@/lib/date';
 import type { Ref } from 'react';
+import type { BulkItemResult } from '@/hooks/useBulkOperations';
 
 type InvoicesTableProps = {
   rows: Invoice[];
@@ -22,6 +33,7 @@ type InvoicesTableProps = {
   onRowToggle: (id: string) => void;
   onRowsSelect: (ids: string[], isSelected: boolean) => void;
   selectAllRef: Ref<HTMLInputElement>;
+  outcomes: Record<string, BulkItemResult>;
 };
 
 export function InvoicesTable({
@@ -33,6 +45,7 @@ export function InvoicesTable({
   onRowToggle,
   onRowsSelect,
   selectAllRef,
+  outcomes,
 }: InvoicesTableProps) {
   function getAriaSort(
     field: InvoiceSortField,
@@ -73,6 +86,40 @@ export function InvoicesTable({
     );
   }
 
+  function renderOutcome(id: string) {
+    if (!(id in outcomes)) {
+      return null;
+    }
+
+    const outcome = outcomes[id];
+
+    if (outcome.ok) {
+      return (
+        <Group gap={4} wrap="nowrap" align="flex-start">
+          <IconCheck
+            aria-hidden="true"
+            size={14}
+            stroke={2}
+            color="var(--mantine-color-green-8)"
+          />
+          <Text size="xs">Sent</Text>
+        </Group>
+      );
+    }
+
+    return (
+      <Group gap={4} wrap="nowrap" align="flex-start">
+        <IconX
+          aria-hidden="true"
+          size={14}
+          stroke={2}
+          color="var(--mantine-color-red-7)"
+        />
+        <Text size="xs">{outcome.error}</Text>
+      </Group>
+    );
+  }
+
   const allSelected = rows.every((el) => selected[el.id]);
   const someSelected = rows.some((el) => selected[el.id]);
 
@@ -95,7 +142,7 @@ export function InvoicesTable({
                 }
               />
             </Table.Th>
-            <Table.Th aria-sort={getAriaSort('customerName')} w="26%">
+            <Table.Th aria-sort={getAriaSort('customerName')} w="18%">
               {renderSortableHeader('customerName', 'Customer')}
             </Table.Th>
             <Table.Th aria-sort={getAriaSort('number')} w="18%">
@@ -108,7 +155,7 @@ export function InvoicesTable({
               {renderSortableHeader('amountCents', 'Amount', 'flex-end')}
             </Table.Th>
             <Table.Th w="14%">Status</Table.Th>
-            <Table.Th w="12%">Reminders</Table.Th>
+            <Table.Th w="20%">Reminders</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -137,7 +184,12 @@ export function InvoicesTable({
                   {INVOICE_STATUS_LABELS[invoice.status]}
                 </Badge>
               </Table.Td>
-              <Table.Td>{invoice.remindersSent}</Table.Td>
+              <Table.Td>
+                <Stack gap={2}>
+                  {invoice.remindersSent}
+                  {renderOutcome(invoice.id)}
+                </Stack>
+              </Table.Td>
             </Table.Tr>
           ))}
         </Table.Tbody>
