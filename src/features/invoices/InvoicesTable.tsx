@@ -131,7 +131,7 @@ export function InvoicesTable({
               <Table.Td>
                 <Badge
                   tt="none"
-                  variant="outline"
+                  variant="dot"
                   color={INVOICE_STATUS_COLORS[invoice.status]}
                 >
                   {INVOICE_STATUS_LABELS[invoice.status]}

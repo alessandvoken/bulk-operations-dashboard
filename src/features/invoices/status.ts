@@ -1,7 +1,7 @@
 import type { InvoiceStatus } from './types';
 
 export const INVOICE_STATUS_COLORS: Record<InvoiceStatus, string> = {
-  draft: 'gray',
+  draft: 'yellow',
   sent: 'blue',
   paid: 'green',
   overdue: 'red',
