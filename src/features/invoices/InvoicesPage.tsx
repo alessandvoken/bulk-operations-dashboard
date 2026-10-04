@@ -52,11 +52,19 @@ export function InvoicesPage({
   const { selected, toggle, setMany, selectedIds, clear } =
     useRowSelection(selectionScope);
 
-  const { run, status, total, processed, outcomes, succeeded, failed } =
-    useBulkOperations({
-      operation: sendReminders,
-      batchSize: REMINDERS_BATCH_SIZE,
-    });
+  const {
+    run,
+    status,
+    total,
+    processed,
+    outcomes,
+    succeeded,
+    failed,
+    retryableIds,
+  } = useBulkOperations({
+    operation: sendReminders,
+    batchSize: REMINDERS_BATCH_SIZE,
+  });
 
   const queryClient = useQueryClient();
 
@@ -69,11 +77,24 @@ export function InvoicesPage({
     selectAllRef.current?.focus();
   }
 
+  async function handleRun(ids: string[]) {
+    await run(ids);
+    queryClient.invalidateQueries({ queryKey: ['invoices'] });
+  }
+
+  function handleRetry() {
+    selectAllRef.current?.focus();
+    handleRun(retryableIds);
+  }
+
   function getRunMessage(): string | null {
     if (status === 'running') {
       return `Sending reminders: ${processed} of ${total}`;
     }
     if (status === 'done') {
+      if (failed === 0) {
+        return `Reminders: ${succeeded} sent`;
+      }
       return `Reminders: ${succeeded} sent, ${failed} failed`;
     }
     return null;
@@ -159,13 +180,18 @@ export function InvoicesPage({
           count={selectedIds.length}
           onClear={handleClear}
           message={getRunMessage()}
+          messageActions={
+            status === 'done' &&
+            retryableIds.length > 0 && (
+              <Button size="xs" variant="default" onClick={handleRetry}>
+                Retry {retryableIds.length} failed
+              </Button>
+            )
+          }
         >
           <Button
             size="xs"
-            onClick={async () => {
-              await run(selectedIds);
-              queryClient.invalidateQueries({ queryKey: ['invoices'] });
-            }}
+            onClick={() => handleRun(selectedIds)}
             data-disabled={status === 'running'}
             aria-disabled={status === 'running'}
           >

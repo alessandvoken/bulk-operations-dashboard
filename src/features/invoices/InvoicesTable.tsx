@@ -6,7 +6,6 @@ import {
 import {
   Badge,
   Group,
-  Stack,
   Table,
   Text,
   Tooltip,
@@ -148,7 +147,7 @@ export function InvoicesTable({
                 }
               />
             </Table.Th>
-            <Table.Th aria-sort={getAriaSort('customerName')} w="26%">
+            <Table.Th aria-sort={getAriaSort('customerName')}>
               {renderSortableHeader('customerName', 'Customer')}
             </Table.Th>
             <Table.Th aria-sort={getAriaSort('number')} w="18%">
@@ -161,7 +160,7 @@ export function InvoicesTable({
               {renderSortableHeader('amountCents', 'Amount', 'flex-end')}
             </Table.Th>
             <Table.Th w="14%">Status</Table.Th>
-            <Table.Th w="12%">Reminders</Table.Th>
+            <Table.Th w="10%">Reminders</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -191,10 +190,10 @@ export function InvoicesTable({
                 </Badge>
               </Table.Td>
               <Table.Td>
-                <Stack gap={2}>
-                  {invoice.remindersSent}
+                <Group justify="space-between" gap="xs">
+                  <span>{invoice.remindersSent}</span>
                   {renderOutcome(invoice.id)}
-                </Stack>
+                </Group>
               </Table.Td>
             </Table.Tr>
           ))}

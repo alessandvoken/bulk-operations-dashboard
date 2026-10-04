@@ -6,6 +6,7 @@ type SelectionBarProps = {
   onClear: () => void;
   children: ReactNode;
   message?: ReactNode;
+  messageActions?: ReactNode;
 };
 
 export function SelectionBar({
@@ -13,9 +14,10 @@ export function SelectionBar({
   onClear,
   children,
   message,
+  messageActions,
 }: SelectionBarProps) {
   return (
-    <Group justify="space-between" mih={36}>
+    <Group justify="space-between" mih={36} px="xs">
       <Group gap="xs">
         <Text role="status" size="sm">
           {count > 0 && `${count} selected`}
@@ -32,6 +34,7 @@ export function SelectionBar({
         <Text size="sm" role="status">
           {message}
         </Text>
+        {messageActions}
         {count > 0 && children}
       </Group>
     </Group>
