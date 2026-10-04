@@ -52,7 +52,7 @@ export function InvoicesPage({
   const { selected, toggle, setMany, selectedIds, clear } =
     useRowSelection(selectionScope);
 
-  const { run, status } = useBulkOperations({
+  const { run, status, total, processed } = useBulkOperations({
     operation: sendReminders,
     batchSize: REMINDERS_BATCH_SIZE,
   });
@@ -66,6 +66,16 @@ export function InvoicesPage({
       clear();
     });
     selectAllRef.current?.focus();
+  }
+
+  function getRunMessage(): string | null {
+    if (status === 'running') {
+      return `Sending reminders: ${processed} of ${total}`;
+    }
+    if (status === 'done') {
+      return `Reminders processed: ${processed} of ${total}`;
+    }
+    return null;
   }
 
   function renderContent() {
@@ -143,7 +153,11 @@ export function InvoicesPage({
         <InvoiceStatusFilter value={search.status} onChange={onStatusChange} />
       </Stack>
       <Stack gap="xs">
-        <SelectionBar count={selectedIds.length} onClear={handleClear}>
+        <SelectionBar
+          count={selectedIds.length}
+          onClear={handleClear}
+          message={getRunMessage()}
+        >
           <Button
             size="xs"
             onClick={async () => {
