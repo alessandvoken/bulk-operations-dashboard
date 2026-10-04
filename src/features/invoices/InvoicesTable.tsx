@@ -153,14 +153,14 @@ export function InvoicesTable({
             <Table.Th aria-sort={getAriaSort('number')} w="18%">
               {renderSortableHeader('number', 'Invoice')}
             </Table.Th>
-            <Table.Th aria-sort={getAriaSort('dueAt')} w="14%">
+            <Table.Th aria-sort={getAriaSort('dueAt')} w="17%">
               {renderSortableHeader('dueAt', 'Due')}
             </Table.Th>
-            <Table.Th aria-sort={getAriaSort('amountCents')} w="10%" ta="right">
+            <Table.Th w="17%">Status</Table.Th>
+            <Table.Th w="10%">Reminders</Table.Th>
+            <Table.Th aria-sort={getAriaSort('amountCents')} w="15%" ta="right">
               {renderSortableHeader('amountCents', 'Amount', 'flex-end')}
             </Table.Th>
-            <Table.Th w="14%">Status</Table.Th>
-            <Table.Th w="10%">Reminders</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -177,9 +177,6 @@ export function InvoicesTable({
               <Table.Td>{invoice.customerName}</Table.Td>
               <Table.Td>{invoice.number}</Table.Td>
               <Table.Td>{formatDate(invoice.dueAt)}</Table.Td>
-              <Table.Td ta="right">
-                {formatMoney(invoice.amountCents, invoice.currency)}
-              </Table.Td>
               <Table.Td>
                 <Badge
                   tt="none"
@@ -194,6 +191,9 @@ export function InvoicesTable({
                   <span>{invoice.remindersSent}</span>
                   {renderOutcome(invoice.id)}
                 </Group>
+              </Table.Td>
+              <Table.Td ta="right">
+                {formatMoney(invoice.amountCents, invoice.currency)}
               </Table.Td>
             </Table.Tr>
           ))}
