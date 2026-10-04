@@ -9,6 +9,7 @@ import {
   Stack,
   Table,
   Text,
+  Tooltip,
   UnstyledButton,
   Checkbox,
 } from '@mantine/core';
@@ -23,6 +24,7 @@ import { formatMoney } from '@/lib/money';
 import { formatDate } from '@/lib/date';
 import type { Ref } from 'react';
 import type { BulkItemResult } from '@/hooks/useBulkOperations';
+import classes from './InvoicesTable.module.css';
 
 type InvoicesTableProps = {
   rows: Invoice[];
@@ -108,14 +110,18 @@ export function InvoicesTable({
     }
 
     return (
-      <Group gap={4} wrap="nowrap" align="flex-start">
-        <IconX
-          aria-hidden="true"
-          size={14}
-          stroke={2}
-          color="var(--mantine-color-red-7)"
-        />
-        <Text size="xs">{outcome.error}</Text>
+      <Group gap={4} wrap="nowrap" align="flex-start" className={classes.error}>
+        <IconX aria-hidden="true" size={14} stroke={2} />
+        <Tooltip
+          label={outcome.error}
+          events={{ hover: true, focus: true, touch: true }}
+          interactive
+          withArrow
+        >
+          <UnstyledButton fz="xs" lh="xs" className={classes.errorDetail}>
+            Failed
+          </UnstyledButton>
+        </Tooltip>
       </Group>
     );
   }
@@ -142,7 +148,7 @@ export function InvoicesTable({
                 }
               />
             </Table.Th>
-            <Table.Th aria-sort={getAriaSort('customerName')} w="18%">
+            <Table.Th aria-sort={getAriaSort('customerName')} w="26%">
               {renderSortableHeader('customerName', 'Customer')}
             </Table.Th>
             <Table.Th aria-sort={getAriaSort('number')} w="18%">
@@ -151,11 +157,11 @@ export function InvoicesTable({
             <Table.Th aria-sort={getAriaSort('dueAt')} w="14%">
               {renderSortableHeader('dueAt', 'Due')}
             </Table.Th>
-            <Table.Th aria-sort={getAriaSort('amountCents')} w="16%" ta="right">
+            <Table.Th aria-sort={getAriaSort('amountCents')} w="10%" ta="right">
               {renderSortableHeader('amountCents', 'Amount', 'flex-end')}
             </Table.Th>
             <Table.Th w="14%">Status</Table.Th>
-            <Table.Th w="20%">Reminders</Table.Th>
+            <Table.Th w="12%">Reminders</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>

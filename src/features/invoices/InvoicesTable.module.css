@@ -1,0 +1,9 @@
+.error {
+  color: light-dark(var(--mantine-color-red-9), var(--mantine-color-red-4));
+}
+
+.errorDetail {
+  cursor: help;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}

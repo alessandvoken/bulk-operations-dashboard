@@ -148,7 +148,7 @@ export function InvoicesPage({
   }
 
   return (
-    <Container size="xl" py="lg">
+    <Container size="lg" py="lg">
       <Stack gap="md" pb="lg">
         <Title order={1}>Invoices</Title>
         <InvoiceSearchInput query={search.q} onQueryChange={onQueryChange} />
