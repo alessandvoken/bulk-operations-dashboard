@@ -53,8 +53,10 @@ export function InvoicesPage({
   const { selected, toggle, setMany, selectedIds, clear } =
     useRowSelection(selectionScope);
 
+  const queryClient = useQueryClient();
+
   const {
-    run,
+    schedule,
     status,
     total,
     processed,
@@ -62,14 +64,18 @@ export function InvoicesPage({
     succeeded,
     failed,
     retryableIds,
+    cancel,
+    pause,
+    resume,
   } = useBulkOperations({
     operation: sendReminders,
     batchSize: REMINDERS_BATCH_SIZE,
+    onFinished: () => queryClient.invalidateQueries({ queryKey: ['invoices'] }),
   });
 
   const permanentFailures = failed - retryableIds.length;
 
-  const queryClient = useQueryClient();
+  const isBusy = status === 'scheduled' || status === 'running';
 
   const selectAllRef = useRef<HTMLInputElement>(null);
 
@@ -80,26 +86,72 @@ export function InvoicesPage({
     selectAllRef.current?.focus();
   }
 
-  async function handleRun(ids: string[]) {
-    await run(ids);
-    queryClient.invalidateQueries({ queryKey: ['invoices'] });
-  }
-
   function handleRetry() {
     selectAllRef.current?.focus();
-    handleRun(retryableIds);
+    schedule(retryableIds);
+  }
+
+  function handleUndo() {
+    selectAllRef.current?.focus();
+    cancel();
   }
 
   function getRunMessage(): string | null {
+    if (status === 'scheduled') {
+      return `Reminders: ${total} queued`;
+    }
+
     if (status === 'running') {
       return `Sending reminders: ${processed} of ${total}`;
     }
+
     if (status === 'done') {
       if (failed === 0) {
         return `Reminders: ${succeeded} sent`;
       }
       return `Reminders: ${succeeded} sent, ${failed} failed`;
     }
+
+    if (status === 'cancelled') {
+      return `Reminders: ${total} cancelled`;
+    }
+
+    return null;
+  }
+
+  function renderRunAction() {
+    if (status === 'scheduled') {
+      return (
+        <Button
+          size="xs"
+          variant="default"
+          onClick={handleUndo}
+          onFocus={pause}
+          onBlur={resume}
+        >
+          Undo
+        </Button>
+      );
+    }
+
+    if (
+      (status === 'done' || status === 'cancelled') &&
+      retryableIds.length > 0
+    ) {
+      return (
+        <Tooltip
+          label="Only temporary errors can be retried"
+          events={{ hover: true, focus: true, touch: false }}
+          disabled={permanentFailures === 0}
+          withArrow
+        >
+          <Button size="xs" variant="default" onClick={handleRetry}>
+            Retry {retryableIds.length} failed
+          </Button>
+        </Tooltip>
+      );
+    }
+
     return null;
   }
 
@@ -183,27 +235,13 @@ export function InvoicesPage({
           count={selectedIds.length}
           onClear={handleClear}
           message={getRunMessage()}
-          messageActions={
-            status === 'done' &&
-            retryableIds.length > 0 && (
-              <Tooltip
-                label="Only temporary errors can be retried"
-                events={{ hover: true, focus: true, touch: false }}
-                disabled={permanentFailures === 0}
-                withArrow
-              >
-                <Button size="xs" variant="default" onClick={handleRetry}>
-                  Retry {retryableIds.length} failed
-                </Button>
-              </Tooltip>
-            )
-          }
+          messageActions={renderRunAction()}
         >
           <Button
             size="xs"
-            onClick={() => handleRun(selectedIds)}
-            data-disabled={status === 'running'}
-            aria-disabled={status === 'running'}
+            onClick={() => schedule(selectedIds)}
+            data-disabled={isBusy}
+            aria-disabled={isBusy}
           >
             {selectedIds.length === 1 ? 'Send reminder' : 'Send reminders'}
           </Button>

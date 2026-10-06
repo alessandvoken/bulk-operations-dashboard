@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useReducer, useEffect, useEffectEvent, useState } from 'react';
 import { chunk } from '@/lib/chunk';
 
 export type BulkItemResult =
@@ -6,7 +6,7 @@ export type BulkItemResult =
   | { id: string; ok: false; error: string; retryable: boolean };
 
 type BulkOperationState = {
-  status: 'idle' | 'running' | 'done';
+  status: 'idle' | 'running' | 'done' | 'scheduled' | 'cancelled';
   runIds: string[];
   outcomes: Record<string, BulkItemResult>;
 };
@@ -20,7 +20,14 @@ type BulkOperationAction =
       type: 'batchSettled';
       results: BulkItemResult[];
     }
-  | { type: 'finished' };
+  | { type: 'finished' }
+  | {
+      type: 'scheduled';
+      ids: string[];
+    }
+  | {
+      type: 'cancelled';
+    };
 
 function bulkOperationReducer(
   state: BulkOperationState,
@@ -43,6 +50,13 @@ function bulkOperationReducer(
     }
     case 'finished':
       return { ...state, status: 'done' };
+    case 'scheduled':
+      return { ...state, status: 'scheduled', runIds: action.ids };
+    case 'cancelled':
+      if (state.status !== 'scheduled') {
+        return state;
+      }
+      return { ...state, status: 'cancelled' };
   }
 }
 
@@ -55,17 +69,20 @@ const initialState: BulkOperationState = {
 type UseBulkOperationsOptions = {
   operation: (ids: string[]) => Promise<BulkItemResult[]>;
   batchSize: number;
+  onFinished?: () => void;
 };
+
+const UNDO_WINDOW_MS = 5_000;
 
 export function useBulkOperations({
   operation,
   batchSize,
+  onFinished,
 }: UseBulkOperationsOptions) {
   const [state, dispatch] = useReducer(bulkOperationReducer, initialState);
+  const [isPaused, setIsPaused] = useState(false);
 
   async function run(ids: string[]) {
-    if (state.status === 'running') return;
-
     dispatch({ type: 'started', ids });
 
     for (const batch of chunk(ids, batchSize)) {
@@ -85,7 +102,39 @@ export function useBulkOperations({
       }
     }
     dispatch({ type: 'finished' });
+    onFinished?.();
   }
+
+  function schedule(ids: string[]) {
+    if (state.status === 'running' || state.status === 'scheduled') return;
+
+    dispatch({ type: 'scheduled', ids });
+  }
+
+  function cancel() {
+    dispatch({ type: 'cancelled' });
+  }
+
+  function pause() {
+    setIsPaused(true);
+  }
+
+  function resume() {
+    setIsPaused(false);
+  }
+
+  const startScheduledRun = useEffectEvent(() => {
+    void run(state.runIds);
+  });
+
+  useEffect(() => {
+    if (state.status !== 'scheduled' || isPaused) return;
+    const timeoutId = setTimeout(() => startScheduledRun(), UNDO_WINDOW_MS);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [state.status, isPaused]);
 
   const total = state.runIds.length;
   const processed = state.runIds.filter((id) => id in state.outcomes).length;
@@ -108,8 +157,11 @@ export function useBulkOperations({
     total,
     processed,
     retryableIds,
-    run,
     succeeded,
     failed,
+    schedule,
+    cancel,
+    pause,
+    resume,
   };
 }
