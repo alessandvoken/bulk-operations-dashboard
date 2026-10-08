@@ -11,6 +11,7 @@ import {
   Group,
   Button,
   Tooltip,
+  Loader,
 } from '@mantine/core';
 import { SelectionBar } from '@/components/SelectionBar';
 import { InvoiceSearchInput } from './InvoiceSearchInput';
@@ -26,6 +27,7 @@ import {
 import { useRowSelection } from '@/hooks/useRowSelection';
 import { useBulkOperations } from '@/hooks/useBulkOperations';
 import { sendReminders, REMINDERS_BATCH_SIZE } from './api';
+import classes from './InvoicesPage.module.css';
 import { useRef } from 'react';
 
 import { flushSync } from 'react-dom';
@@ -120,11 +122,13 @@ export function InvoicesPage({
   }
 
   function renderRunAction() {
-    if (status === 'scheduled') {
+    if (isBusy) {
       return (
         <Button
           size="xs"
           variant="default"
+          className={classes.appear}
+          disabled={status === 'running'}
           onClick={handleUndo}
           onFocus={pause}
           onBlur={resume}
@@ -145,7 +149,12 @@ export function InvoicesPage({
           disabled={permanentFailures === 0}
           withArrow
         >
-          <Button size="xs" variant="default" onClick={handleRetry}>
+          <Button
+            size="xs"
+            variant="default"
+            className={classes.appear}
+            onClick={handleRetry}
+          >
             Retry {retryableIds.length} failed
           </Button>
         </Tooltip>
@@ -242,6 +251,7 @@ export function InvoicesPage({
             onClick={() => schedule(selectedIds)}
             data-disabled={isBusy}
             aria-disabled={isBusy}
+            leftSection={isBusy && <Loader size={14} color="currentColor" />}
           >
             {selectedIds.length === 1 ? 'Send reminder' : 'Send reminders'}
           </Button>
