@@ -30,7 +30,7 @@ import { useBulkOperations } from '@/hooks/useBulkOperations';
 import { sendReminders, REMINDERS_BATCH_SIZE } from './api';
 import classes from './InvoicesPage.module.css';
 import motion from '@/components/motion.module.css';
-import { useRef } from 'react';
+import { useId, useRef } from 'react';
 
 import { flushSync } from 'react-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -81,6 +81,65 @@ export function InvoicesPage({
   const permanentFailures = failed - retryableIds.length;
 
   const isBusy = status === 'scheduled' || status === 'running';
+
+  function getRangeLabel(): string | null {
+    if (!data || data.total === 0) {
+      return null;
+    }
+
+    const firstRow = (search.page - 1) * search.pageSize + 1;
+    const lastRow = Math.min(search.page * search.pageSize, data.total);
+
+    return `${firstRow}–${lastRow} of ${data.total}`;
+  }
+
+  const rangeLabel = getRangeLabel();
+
+  const pageSizeId = useId();
+
+  function handlePageChange(page: number) {
+    if (page === search.page) {
+      return;
+    }
+    onPageChange(page);
+  }
+
+  function renderPageControls(totalPages: number) {
+    const atStart = search.page <= 1;
+    const atEnd = search.page >= totalPages;
+    const controls = [
+      { Control: Pagination.First, label: 'First page', inactive: atStart },
+      {
+        Control: Pagination.Previous,
+        label: 'Previous page',
+        inactive: atStart,
+      },
+      { Control: Pagination.Next, label: 'Next page', inactive: atEnd },
+      { Control: Pagination.Last, label: 'Last page', inactive: atEnd },
+    ];
+
+    return (
+      <Pagination.Root
+        total={totalPages}
+        value={search.page}
+        onChange={handlePageChange}
+      >
+        <Box component="nav" aria-label="Pagination">
+          <Group gap={4} wrap="nowrap">
+            {controls.map(({ Control, label, inactive }) => (
+              <Control
+                key={label}
+                aria-label={label}
+                disabled={false}
+                aria-disabled={inactive}
+                mod={{ disabled: inactive }}
+              />
+            ))}
+          </Group>
+        </Box>
+      </Pagination.Root>
+    );
+  }
 
   const selectAllRef = useRef<HTMLInputElement>(null);
 
@@ -189,8 +248,6 @@ export function InvoicesPage({
 
     if (isSuccess) {
       const totalPages = Math.ceil(data.total / search.pageSize);
-      const firstRow = (search.page - 1) * search.pageSize + 1;
-      const lastRow = Math.min(search.page * search.pageSize, data.total);
       if (data.rows.length === 0) {
         return (
           <Paper withBorder p="md" radius="md">
@@ -218,28 +275,26 @@ export function InvoicesPage({
             />
           </Box>
 
-          <Group justify="space-between" align="flex-end">
-            <Group gap="md">
-              <Pagination
-                total={totalPages}
-                value={search.page}
-                onChange={onPageChange}
-              />
-              <Text size="sm">
-                {firstRow}–{lastRow} of {data.total}
+          <Group justify="flex-end" gap="lg" pt="lg">
+            <Group gap="xs" wrap="nowrap">
+              <Text component="label" htmlFor={pageSizeId} size="sm">
+                Rows per page
               </Text>
+              <Select
+                id={pageSizeId}
+                w={80}
+                checkIconPosition="right"
+                data={INVOICE_PAGE_SIZES.map(String)}
+                value={String(search.pageSize)}
+                onChange={(value) => {
+                  if (value !== null) {
+                    onPageSizeChange(Number(value));
+                  }
+                }}
+              />
             </Group>
-            <Select
-              label="Rows per page"
-              checkIconPosition="right"
-              data={INVOICE_PAGE_SIZES.map(String)}
-              value={String(search.pageSize)}
-              onChange={(value) => {
-                if (value !== null) {
-                  onPageSizeChange(Number(value));
-                }
-              }}
-            />
+            {rangeLabel !== null && <Text size="sm">{rangeLabel}</Text>}
+            {renderPageControls(totalPages)}
           </Group>
         </Stack>
       );

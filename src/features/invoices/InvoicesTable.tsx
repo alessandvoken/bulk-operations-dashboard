@@ -127,7 +127,13 @@ export function InvoicesTable({
 
   return (
     <Table.ScrollContainer minWidth={720}>
-      <Table layout="fixed" highlightOnHover tabularNums>
+      <Table
+        layout="fixed"
+        striped
+        highlightOnHover
+        tabularNums
+        verticalSpacing="sm"
+      >
         <Table.Thead>
           <Table.Tr>
             <Table.Th w={40}>

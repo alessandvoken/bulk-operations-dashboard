@@ -28,17 +28,20 @@ function RouteComponent() {
 
   function handleSortChange(field: InvoiceSortField) {
     navigate({
+      resetScroll: false,
       search: (prev) => nextSortSearch(prev, field),
     });
   }
 
   function handlePageChange(page: number) {
     navigate({
+      resetScroll: false,
       search: (prev) => ({ ...prev, page }),
     });
   }
   function handlePageSizeChange(pageSize: number) {
     navigate({
+      resetScroll: false,
       search: (prev) => ({ ...prev, pageSize, page: 1 }),
     });
   }
@@ -46,12 +49,14 @@ function RouteComponent() {
   function handleQueryChange(q: string) {
     navigate({
       replace: true,
+      resetScroll: false,
       search: (prev) => ({ ...prev, q, page: 1 }),
     });
   }
 
   function handleStatusChange(status: InvoiceStatus[]) {
     navigate({
+      resetScroll: false,
       search: (prev) => ({ ...prev, status, page: 1 }),
     });
   }
