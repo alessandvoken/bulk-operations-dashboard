@@ -12,6 +12,7 @@ import {
   Button,
   Tooltip,
   Loader,
+  Box,
 } from '@mantine/core';
 import { SelectionBar } from '@/components/SelectionBar';
 import { InvoiceSearchInput } from './InvoiceSearchInput';
@@ -50,7 +51,8 @@ export function InvoicesPage({
   onQueryChange,
   onStatusChange,
 }: InvoicesPageProps) {
-  const { data, isPending, isError, isSuccess } = useInvoices(search);
+  const { data, isPending, isError, isSuccess, isPlaceholderData } =
+    useInvoices(search);
   const selectionScope = JSON.stringify([search.q, search.status]);
   const { selected, toggle, setMany, selectedIds, clear } =
     useRowSelection(selectionScope);
@@ -196,17 +198,23 @@ export function InvoicesPage({
 
       return (
         <Stack>
-          <InvoicesTable
-            rows={data.rows}
-            sort={search.sort}
-            dir={search.dir}
-            onSortChange={onSortChange}
-            selected={selected}
-            onRowToggle={toggle}
-            onRowsSelect={setMany}
-            selectAllRef={selectAllRef}
-            outcomes={outcomes}
-          />
+          <Box
+            aria-busy={isPlaceholderData}
+            className={isPlaceholderData ? classes.stale : undefined}
+          >
+            <InvoicesTable
+              rows={data.rows}
+              sort={search.sort}
+              dir={search.dir}
+              onSortChange={onSortChange}
+              selected={selected}
+              onRowToggle={toggle}
+              onRowsSelect={setMany}
+              selectAllRef={selectAllRef}
+              outcomes={outcomes}
+            />
+          </Box>
+
           <Group justify="space-between" align="flex-end">
             <Pagination
               total={totalPages}

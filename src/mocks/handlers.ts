@@ -73,4 +73,33 @@ export const handlers = [
 
     return HttpResponse.json({ results: sendReminders(ids) });
   }),
+
+  http.put('/api/server-conditions', async ({ request }) => {
+    const { latencyMs, failureRate } = (await request.json()) as {
+      latencyMs?: unknown;
+      failureRate?: unknown;
+    };
+
+    const isValid =
+      typeof latencyMs === 'number' &&
+      latencyMs >= 0 &&
+      typeof failureRate === 'number' &&
+      failureRate >= 0 &&
+      failureRate <= 1;
+
+    if (!isValid) {
+      return HttpResponse.json(
+        {
+          message:
+            'latencyMs must be a number >= 0 and failureRate a number between 0 and 1',
+        },
+        { status: 400 },
+      );
+    }
+
+    mockConfig.latencyMs = latencyMs;
+    mockConfig.failureRate = failureRate;
+
+    return HttpResponse.json(mockConfig);
+  }),
 ];
