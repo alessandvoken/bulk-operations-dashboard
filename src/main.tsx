@@ -42,6 +42,15 @@ function rejectAfter(ms: number): Promise<never> {
   });
 }
 
+const MOCK_RECOVERY_KEY = 'mock-worker-recovery';
+
+async function unregisterServiceWorkers() {
+  const registrations = await navigator.serviceWorker.getRegistrations();
+  await Promise.all(
+    registrations.map((registration) => registration.unregister()),
+  );
+}
+
 async function main() {
   try {
     const { worker } = await import('./mocks/browser');
@@ -49,8 +58,21 @@ async function main() {
       worker.start({ onUnhandledRequest: 'bypass' }),
       rejectAfter(MOCK_START_TIMEOUT_MS),
     ]);
+    sessionStorage.removeItem(MOCK_RECOVERY_KEY);
   } catch (error) {
     console.error('Mock API failed to start', error);
+
+    if (sessionStorage.getItem(MOCK_RECOVERY_KEY) === null) {
+      sessionStorage.setItem(MOCK_RECOVERY_KEY, 'attempted');
+      await Promise.race([
+        unregisterServiceWorkers(),
+        rejectAfter(MOCK_START_TIMEOUT_MS),
+      ]).catch((unregisterError: unknown) => {
+        console.error('Mock worker reset failed', unregisterError);
+      });
+      location.reload();
+      return;
+    }
   }
 
   createRoot(document.getElementById('root')!).render(
