@@ -1,7 +1,7 @@
 import { TextInput } from '@mantine/core';
 import { useDebouncedCallback } from '@mantine/hooks';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type InvoiceSearchInputProps = {
   query: string;
@@ -21,6 +21,10 @@ export function InvoiceSearchInput({
   }
 
   const debouncedQueryChange = useDebouncedCallback(onQueryChange, 300);
+
+  useEffect(() => {
+    debouncedQueryChange.cancel();
+  }, [query, debouncedQueryChange]);
 
   return (
     <TextInput
