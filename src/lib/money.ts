@@ -1,13 +1,13 @@
-const formatters = new Map<string, Intl.NumberFormat>();
+import { APP_LOCALE } from './locale';
 
-const NUMBER_FORMAT_LOCALE = 'it-IT';
+const formatters = new Map<string, Intl.NumberFormat>();
 
 const getFormatter = (currency: string) => {
   const formatter = formatters.get(currency);
   if (formatter) {
     return formatter;
   }
-  const newFormatter = new Intl.NumberFormat(NUMBER_FORMAT_LOCALE, {
+  const newFormatter = new Intl.NumberFormat(APP_LOCALE, {
     style: 'currency',
     currency,
   });

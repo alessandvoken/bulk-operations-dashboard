@@ -5,7 +5,7 @@ export type BulkItemResult =
   | { id: string; ok: true }
   | { id: string; ok: false; error: string; retryable: boolean };
 
-type BulkOperationState = {
+export type BulkOperationState = {
   status: 'idle' | 'running' | 'done' | 'scheduled' | 'cancelled';
   runIds: string[];
   outcomes: Record<string, BulkItemResult>;
@@ -29,7 +29,7 @@ type BulkOperationAction =
       type: 'cancelled';
     };
 
-function bulkOperationReducer(
+export function bulkOperationReducer(
   state: BulkOperationState,
   action: BulkOperationAction,
 ): BulkOperationState {
