@@ -24,7 +24,7 @@ export function SelectionBar({
         </Text>
 
         {count > 0 && (
-          <Button variant="subtle" size="xs" onClick={onClear}>
+          <Button variant="default" size="xs" onClick={onClear}>
             Clear selection
           </Button>
         )}

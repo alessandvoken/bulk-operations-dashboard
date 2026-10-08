@@ -29,6 +29,7 @@ import { useRowSelection } from '@/hooks/useRowSelection';
 import { useBulkOperations } from '@/hooks/useBulkOperations';
 import { sendReminders, REMINDERS_BATCH_SIZE } from './api';
 import classes from './InvoicesPage.module.css';
+import motion from '@/components/motion.module.css';
 import { useRef } from 'react';
 
 import { flushSync } from 'react-dom';
@@ -128,8 +129,8 @@ export function InvoicesPage({
       return (
         <Button
           size="xs"
-          variant="default"
-          className={classes.appear}
+          variant="outline"
+          className={motion.appear}
           disabled={status === 'running'}
           onClick={handleUndo}
           onFocus={pause}
@@ -154,7 +155,7 @@ export function InvoicesPage({
           <Button
             size="xs"
             variant="default"
-            className={classes.appear}
+            className={motion.appear}
             onClick={handleRetry}
           >
             Retry {retryableIds.length} failed
@@ -188,6 +189,8 @@ export function InvoicesPage({
 
     if (isSuccess) {
       const totalPages = Math.ceil(data.total / search.pageSize);
+      const firstRow = (search.page - 1) * search.pageSize + 1;
+      const lastRow = Math.min(search.page * search.pageSize, data.total);
       if (data.rows.length === 0) {
         return (
           <Paper withBorder p="md" radius="md">
@@ -216,11 +219,16 @@ export function InvoicesPage({
           </Box>
 
           <Group justify="space-between" align="flex-end">
-            <Pagination
-              total={totalPages}
-              value={search.page}
-              onChange={onPageChange}
-            />
+            <Group gap="md">
+              <Pagination
+                total={totalPages}
+                value={search.page}
+                onChange={onPageChange}
+              />
+              <Text size="sm">
+                {firstRow}–{lastRow} of {data.total}
+              </Text>
+            </Group>
             <Select
               label="Rows per page"
               checkIconPosition="right"
@@ -241,8 +249,8 @@ export function InvoicesPage({
   }
 
   return (
-    <Container size="lg" py="lg">
-      <Stack gap="md" pb="lg">
+    <Container size="lg" py="xl">
+      <Stack gap="md" pb="xl">
         <Title order={1}>Invoices</Title>
         <InvoiceSearchInput query={search.q} onQueryChange={onQueryChange} />
         <InvoiceStatusFilter value={search.status} onChange={onStatusChange} />

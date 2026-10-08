@@ -178,6 +178,7 @@ export function InvoicesTable({
                 <Badge
                   tt="none"
                   variant="dot"
+                  className={classes.statusBadge}
                   color={INVOICE_STATUS_COLORS[invoice.status]}
                 >
                   {INVOICE_STATUS_LABELS[invoice.status]}

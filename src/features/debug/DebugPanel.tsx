@@ -1,7 +1,8 @@
-import { SegmentedControl, Group, Stack, Text } from '@mantine/core';
+import { SegmentedControl, Group, Text } from '@mantine/core';
 import { useState, useId } from 'react';
 import { updateMockConfig } from './api';
 import type { MockApiConfig } from './api';
+import motion from '@/components/motion.module.css';
 
 type DebugPreset = 'normal' | 'slow' | 'flaky';
 
@@ -35,22 +36,22 @@ export function DebugPanel() {
   }
 
   return (
-    <Stack gap={4} align="flex-end">
-      <Group gap="xs">
-        <Text size="md" id={labelId}>
-          Simulate server conditions
-        </Text>
-        <SegmentedControl
-          data={PRESET_OPTIONS}
-          value={preset}
-          onChange={handlePresetChange}
-          size="md"
-          aria-labelledby={labelId}
-        />
-      </Group>
-      <Text size="sm" role="status">
-        {PRESET_DESCRIPTIONS[preset]}
+    <Group gap="sm">
+      <Text size="sm" id={labelId}>
+        Simulate server conditions
       </Text>
-    </Stack>
+      <SegmentedControl
+        data={PRESET_OPTIONS}
+        value={preset}
+        onChange={handlePresetChange}
+        size="sm"
+        aria-labelledby={labelId}
+      />
+      <Text size="sm" role="status">
+        <span key={preset} className={motion.appear}>
+          {PRESET_DESCRIPTIONS[preset]}
+        </span>
+      </Text>
+    </Group>
   );
 }
