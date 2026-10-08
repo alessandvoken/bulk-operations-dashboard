@@ -1,8 +1,5 @@
-import type { Invoice, InvoiceSortField } from '@/features/invoices/types';
-import {
-  INVOICE_STATUS_COLORS,
-  INVOICE_STATUS_LABELS,
-} from '@/features/invoices/status';
+import type { Invoice, InvoiceSortField } from './types';
+import { INVOICE_STATUS_COLORS, INVOICE_STATUS_LABELS } from './status';
 import {
   Badge,
   Group,

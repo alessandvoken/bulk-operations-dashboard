@@ -7,6 +7,30 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+const MOCKS_IMPORT = {
+  regex: '(^|/)mocks(/|$)',
+  message:
+    'src/mocks stands in for the server. The client reaches it only over HTTP.',
+};
+
+const FEATURE_IMPORT = {
+  regex: '(^|/)features(/|$)',
+  message:
+    'Shared code must not depend on a feature. Pass what it needs as props or arguments.',
+};
+
+const OTHER_FEATURE_IMPORT = {
+  regex: '^@/features/',
+  message:
+    'A feature never imports another feature. Import files of this feature with ./ and move shared code to components/, hooks/ or lib/.',
+};
+
+const PARENT_IMPORT = {
+  regex: '^\\.\\./',
+  message:
+    'Inside a feature, import its own files with ./ and anything else with @/.',
+};
+
 export default defineConfig([
   globalIgnores([
     'dist',
@@ -31,6 +55,31 @@ export default defineConfig([
     files: ['src/routes/**/*.tsx'],
     rules: {
       'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/mocks/**', 'src/main.tsx'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: [MOCKS_IMPORT] }],
+    },
+  },
+  {
+    files: ['src/features/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [MOCKS_IMPORT, OTHER_FEATURE_IMPORT, PARENT_IMPORT] },
+      ],
+    },
+  },
+  {
+    files: ['src/{components,hooks,lib}/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [MOCKS_IMPORT, FEATURE_IMPORT] },
+      ],
     },
   },
 ]);
