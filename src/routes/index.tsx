@@ -1,10 +1,15 @@
-import { useNavigate, createFileRoute } from '@tanstack/react-router';
+import {
+  useNavigate,
+  createFileRoute,
+  stripSearchParams,
+} from '@tanstack/react-router';
 import { InvoicesPage } from '@/features/invoices/InvoicesPage';
 import type {
   InvoiceSortField,
   InvoiceStatus,
 } from '@/features/invoices/types';
 import {
+  DEFAULT_INVOICE_SEARCH,
   nextSortSearch,
   parseInvoiceListSearch,
 } from '@/features/invoices/search';
@@ -12,6 +17,9 @@ import {
 export const Route = createFileRoute('/')({
   component: RouteComponent,
   validateSearch: parseInvoiceListSearch,
+  search: {
+    middlewares: [stripSearchParams(DEFAULT_INVOICE_SEARCH)],
+  },
 });
 
 function RouteComponent() {

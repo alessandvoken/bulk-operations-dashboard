@@ -9,7 +9,7 @@ import {
   INVOICE_STATUSES,
 } from './types';
 
-const DEFAULT_INVOICE_SEARCH: InvoiceListSearch = {
+export const DEFAULT_INVOICE_SEARCH: InvoiceListSearch = {
   page: 1,
   pageSize: 10,
   sort: 'dueAt',
