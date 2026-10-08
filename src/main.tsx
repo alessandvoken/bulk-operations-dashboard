@@ -34,10 +34,21 @@ const queryClient = new QueryClient({
   },
 });
 
+const MOCK_START_TIMEOUT_MS = 5_000;
+
+function rejectAfter(ms: number): Promise<never> {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(new Error(`timed out after ${ms} ms`)), ms);
+  });
+}
+
 async function main() {
   try {
     const { worker } = await import('./mocks/browser');
-    await worker.start({ onUnhandledRequest: 'bypass' });
+    await Promise.race([
+      worker.start({ onUnhandledRequest: 'bypass' }),
+      rejectAfter(MOCK_START_TIMEOUT_MS),
+    ]);
   } catch (error) {
     console.error('Mock API failed to start', error);
   }
