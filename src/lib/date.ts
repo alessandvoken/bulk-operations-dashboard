@@ -1,9 +1,10 @@
-const DATE_FORMAT_LOCALE = 'en-GB';
+import { APP_LOCALE } from './locale';
 
-const dateFormatter = new Intl.DateTimeFormat(DATE_FORMAT_LOCALE, {
+const dateFormatter = new Intl.DateTimeFormat(APP_LOCALE, {
   day: '2-digit',
   month: 'short',
   year: 'numeric',
+  timeZone: 'UTC',
 });
 
 export function formatDate(value: string) {
