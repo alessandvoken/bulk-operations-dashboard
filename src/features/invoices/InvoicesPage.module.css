@@ -2,3 +2,18 @@
   opacity: 0.7;
   transition: opacity 150ms ease-out 300ms;
 }
+
+.selectionBar {
+  padding-block: var(--mantine-spacing-xs);
+  background-color: var(--mantine-color-body);
+}
+
+.selectionBar[data-sticky] {
+  position: sticky;
+  top: var(--app-header-offset, 0px);
+  z-index: var(--mantine-z-index-app);
+}
+
+:global(html):has(.selectionBar[data-sticky]) .results :where(*) {
+  scroll-margin-top: calc(var(--app-header-offset, 0px) + 4rem);
+}

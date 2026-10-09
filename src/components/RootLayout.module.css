@@ -1,3 +1,20 @@
 .header {
   border-bottom: 1px solid var(--mantine-color-default-border);
+  background-color: var(--mantine-color-body);
+}
+
+.main :where(*) {
+  scroll-margin-top: calc(var(--app-header-offset, 0px) + 0.5rem);
+}
+
+@media (min-height: 37.5em) {
+  :global(html) {
+    --app-header-offset: var(--app-header-height, 0px);
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: var(--mantine-z-index-app);
+  }
 }
