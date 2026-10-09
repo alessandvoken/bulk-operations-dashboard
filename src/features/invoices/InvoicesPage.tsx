@@ -1,5 +1,6 @@
 import {
   Alert,
+  Anchor,
   Container,
   Paper,
   Skeleton,
@@ -31,7 +32,8 @@ import { sendReminders, REMINDERS_BATCH_SIZE } from './api';
 import classes from './InvoicesPage.module.css';
 import motion from '@/components/motion.module.css';
 import { useId, useRef } from 'react';
-
+import { clsx } from 'clsx';
+import { useReducedMotion } from '@mantine/hooks';
 import { flushSync } from 'react-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -52,8 +54,15 @@ export function InvoicesPage({
   onQueryChange,
   onStatusChange,
 }: InvoicesPageProps) {
-  const { data, isPending, isError, isSuccess, isPlaceholderData } =
-    useInvoices(search);
+  const {
+    data,
+    isPending,
+    isError,
+    isSuccess,
+    isPlaceholderData,
+    isFetching,
+    refetch,
+  } = useInvoices(search);
   const selectionScope = JSON.stringify([search.q, search.status]);
   const { selected, toggle, setMany, selectedIds, clear } =
     useRowSelection(selectionScope);
@@ -81,6 +90,8 @@ export function InvoicesPage({
   const permanentFailures = failed - retryableIds.length;
 
   const isBusy = status === 'scheduled' || status === 'running';
+
+  const isBarSticky = selectedIds.length > 0 || isBusy;
 
   function getRangeLabel(): string | null {
     if (!data || data.total === 0) {
@@ -142,22 +153,42 @@ export function InvoicesPage({
   }
 
   const selectAllRef = useRef<HTMLInputElement>(null);
+  const reduceMotion = useReducedMotion();
+
+  function focusSelectAll() {
+    const checkbox = selectAllRef.current;
+    if (checkbox === null) {
+      return;
+    }
+    checkbox.focus({ preventScroll: true });
+    checkbox.scrollIntoView({
+      behavior: reduceMotion ? 'instant' : 'smooth',
+      block: 'nearest',
+    });
+  }
 
   function handleClear() {
     flushSync(() => {
       clear();
     });
-    selectAllRef.current?.focus();
+    focusSelectAll();
   }
 
   function handleRetry() {
-    selectAllRef.current?.focus();
+    focusSelectAll();
     schedule(retryableIds);
   }
 
   function handleUndo() {
-    selectAllRef.current?.focus();
+    focusSelectAll();
     cancel();
+  }
+
+  function handleTryAgain() {
+    if (isFetching) {
+      return;
+    }
+    refetch();
   }
 
   function getRunMessage(): string | null {
@@ -241,7 +272,16 @@ export function InvoicesPage({
     if (isError) {
       return (
         <Alert color="red" title="Could not load invoices">
-          Try refreshing the page.
+          <Anchor
+            component="button"
+            inherit
+            c="inherit"
+            underline="always"
+            aria-disabled={isFetching}
+            onClick={handleTryAgain}
+          >
+            {isFetching ? 'Retrying…' : 'Try again'}
+          </Anchor>
         </Alert>
       );
     }
@@ -311,23 +351,28 @@ export function InvoicesPage({
         <InvoiceStatusFilter value={search.status} onChange={onStatusChange} />
       </Stack>
       <Stack gap="xs">
-        <SelectionBar
-          count={selectedIds.length}
-          onClear={handleClear}
-          message={getRunMessage()}
-          messageActions={renderRunAction()}
+        <Box
+          className={clsx(classes.selectionBar, isBarSticky && motion.appear)}
+          mod={{ sticky: isBarSticky }}
         >
-          <Button
-            size="xs"
-            onClick={() => schedule(selectedIds)}
-            data-disabled={isBusy}
-            aria-disabled={isBusy}
-            leftSection={isBusy && <Loader size={14} color="currentColor" />}
+          <SelectionBar
+            count={selectedIds.length}
+            onClear={handleClear}
+            message={getRunMessage()}
+            messageActions={renderRunAction()}
           >
-            {selectedIds.length === 1 ? 'Send reminder' : 'Send reminders'}
-          </Button>
-        </SelectionBar>
-        {renderContent()}
+            <Button
+              size="xs"
+              onClick={() => schedule(selectedIds)}
+              data-disabled={isBusy}
+              aria-disabled={isBusy}
+              leftSection={isBusy && <Loader size={14} color="blue" />}
+            >
+              {selectedIds.length === 1 ? 'Send reminder' : 'Send reminders'}
+            </Button>
+          </SelectionBar>
+        </Box>
+        <Box className={classes.results}>{renderContent()}</Box>
       </Stack>
     </Container>
   );
