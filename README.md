@@ -68,5 +68,3 @@ pnpm exec tsc -b
 Only business logic files have tests
 
 Nothing warns you when an invoice already got a reminder today. That check belongs to the server at send time: the client only holds the current page of the selection, and a skipped invoice would need a third outcome next to sent and failed.
-
-After the tab has been idle for a while, the table sometimes fails to load. My guess is that the browser stops the idle service worker and MSW stops answering.

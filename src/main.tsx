@@ -1,6 +1,10 @@
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  focusManager,
+} from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -51,14 +55,31 @@ async function unregisterServiceWorkers() {
   );
 }
 
+function runBeforeFocusRefetch(task: () => Promise<void>) {
+  focusManager.setEventListener((handleFocus) => {
+    async function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        await task();
+      }
+      handleFocus();
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  });
+}
+
 async function main() {
   try {
-    const { worker } = await import('./mocks/browser');
+    const { worker, reactivateMocking } = await import('./mocks/browser');
     await Promise.race([
       worker.start({ onUnhandledRequest: 'bypass' }),
       rejectAfter(MOCK_START_TIMEOUT_MS),
     ]);
     sessionStorage.removeItem(MOCK_RECOVERY_KEY);
+    runBeforeFocusRefetch(reactivateMocking);
   } catch (error) {
     console.error('Mock API failed to start', error);
 

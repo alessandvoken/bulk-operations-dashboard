@@ -33,6 +33,11 @@ export async function fetchInvoices(
   if (!res.ok) {
     throw new Error(`fetchInvoices ${res.status}`);
   }
+
+  if (!res.headers.get('content-type')?.includes('application/json')) {
+    throw new Error('fetchInvoices response is not JSON');
+  }
+
   return res.json();
 }
 

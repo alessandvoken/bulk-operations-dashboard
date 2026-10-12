@@ -48,6 +48,8 @@ Selection belongs to the result set. It survives paging and sorting, so one run 
 
 There is no backend. MSW intercepts requests in the browser and answers from a seeded dataset of 500 invoices, so every visitor sees the same data. It costs 160 kB gzipped before the first render. The app waits for the worker at most five seconds: a worker stuck in installation once left the page blank with no error, so after the timeout the app renders anyway and the table shows its load error with a Try again button.
 
+The browser also stops an idle worker in a background tab, and the restarted worker has forgotten the tab. Requests then went to the host, which answered with the page HTML and status 200, and the table showed its load error until a reload. Now, when the tab becomes visible again, the entry file sends the worker MSW's activation message and holds the focus refetch until the worker answers. The cost is a dependency on `MOCK_ACTIVATE`, a message name internal to MSW.
+
 ## Server conditions go through the mock API
 
 The Simulate server conditions control is there for the demo. It lets a visitor cause failures on demand instead of waiting for the 8% of temporary errors on the Normal setting. It changes the mock's settings with `PUT /api/server-conditions`, like any other request, instead of importing them, so the import rules below hold for it too. The presets only change latency and temporary failures: paid, void and draft invoices fail on every setting, because those are business rules. The cost is a control that a real product would not ship, kept in the header, apart from the invoices screen.
